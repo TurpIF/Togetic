@@ -3,12 +3,12 @@ Togetic
 
 Application utilisant une centrale inertiel pour récupérer la position d'un objet et contrôler une caméra dans blender.
 
-## Requirements
+## Requis
 - [Python 2.7][]
 - [Matplotlib][]
 - [Blender][] (utilisé avec la 2.69)
 
-## Authors
+## Auteurs
 - [Pierre Turpin][]
 - [Matthieu Falce][]
 - [Sarah Leclerc][]
@@ -21,5 +21,5 @@ Application utilisant une centrale inertiel pour récupérer la position d'un ob
 [Pierre Turpin]: https://github.com/TurpIF
 [Matthieu Falce]: #
 [Sarah Leclerc]: #
-[Stéphane Baudrand]: #
+[Stéphane Baudrand]: https://github.com/Stefjeanne
 [Franz Laugt]: https://github.com/znarf94

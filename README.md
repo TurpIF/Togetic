@@ -22,4 +22,4 @@ Application utilisant une centrale inertiel pour récupérer la position d'un ob
 [Matthieu Falce]: #
 [Sarah Leclerc]: #
 [Stéphane Baudrand]: #
-[Franz Laugt]: #
+[Franz Laugt]: https://github.com/znarf94

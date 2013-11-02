@@ -1,70 +1,40 @@
-#!/bin/env python2.7
+#!/bin/env python3
 
-import sys
-import socket
-import os
 import time
-import threading
+from Server import ClientServer
+from Server import ListenerServer
 
-# Dummy path to send
-def path(t):
-    import math
-    return (10 * math.cos(t), 10 * math.sin(t), 0)
+def PositionServer(path):
+    class _PositionServer(ClientServer):
+        def __init__(self, client):
+            ClientServer.__init__(self, client)
+            self._time = 0
+            self._dt = 0.01
 
-class PositionServer(threading.Thread):
-    def __init__(self, socket):
-        threading.Thread.__init__(self)
-
-        self._socket = socket
-        self._time = 0
-        self._dt = 0.01
-        self._running = False
-
-    def run(self):
-        self._running = True
-        while self._running:
+        def _msgToSend(self):
             x, y, z = path(self._time)
             data = 'POSITION ' + str(x) + ' ' + str(y) + ' ' + str(z)
-            try:
-                self._socket.send(data + '\n')
-            except socket.error:
-                print 'An error occur with a client'
-                self.stop()
+            return bytes(data + '\n', 'UTF-8')
 
+        def _parseRecv(self, data):
+            pass
+
+        def _run(self):
             time.sleep(self._dt)
             self._time += self._dt
 
-        self._socket.close()
+    return _PositionServer
 
-    def stop(self):
-        self._running = False
-
+def dummyPath(t):
+    import math
+    return (10 * math.cos(t), 10 * math.sin(t), 0)
 
 if __name__ == '__main__':
-    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     addr = '/tmp/togetic-blender'
-
-    if os.path.exists(addr):
-        try:
-            os.remove(addr)
-        except OSError:
-            print 'A file `' + addr + '` already exists. Shutdown'
-            sys.exit(0)
-
-    sock.bind(addr)
-    lsServer = []
-
+    listener = ListenerServer(addr, PositionServer(dummyPath))
+    listener.start()
     try:
         while True:
-            sock.listen(1)
-            conn, addr = sock.accept()
-            print 'New client'
-            server = PositionServer(conn)
-            server.start()
-            lsServer += [server]
+            pass
     except KeyboardInterrupt:
-        for server in lsServer:
-            server.stop()
-            server.join(5)
-
-    sock.close()
+        listener.stop()

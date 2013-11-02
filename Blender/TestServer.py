@@ -32,8 +32,8 @@ def dummyPath(t):
 if __name__ == '__main__':
     addr = '/tmp/togetic-blender'
     listener = ListenerServer(addr, PositionServer(dummyPath))
-    listener.start()
     try:
+        listener.start()
         while True:
             pass
     except KeyboardInterrupt:

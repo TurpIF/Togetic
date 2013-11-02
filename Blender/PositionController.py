@@ -2,6 +2,9 @@ import threading
 import mathutils
 import socket
 import os
+import select
+from Server import Server
+import bpy
 
 # Shared memory
 relPosition = mathutils.Vector((0, 1, 0))
@@ -9,71 +12,63 @@ lockPosition = threading.Lock()
 
 # Sample trajectory to test the module
 import math
-def server():
-    global lockPosition
-    global relPosition
+class server(Server):
+    def __init__(self, addr):
+        Server.__init__(self)
 
-    # Connect to the socket as a client
-    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    addr = '/tmp/togetic-blender'
-
-    def connect():
-        # Try to connect
-        while True:
-            try:
-                sock.connect(addr)
-            except FileNotFoundError:
-                continue
-            except ConnectionRefusedError:
-                continue
-            break
-
-    connect()
-
-    while True:
-        # Very ugly solution to detect when bge is stopped
-        # TODO find an other way to do it (there is still some errors sometime)
+        # Connect to the socket as a client
+        self._socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         try:
-            import bge
-        except ImportError:
-            break
+            self._socket.connect(addr)
+        except (FileNotFoundError, ConnectionRefusedError):
+            raise
 
-        try:
-            data_raw = sock.recv(1024)
-        except socket.error:
-            sock.close()
-            connect()
-            continue
+    def _serve(self):
+        global lockPosition
+        global relPosition
 
-        data_line = data_raw.decode('utf-8').split('\n')
-        for data in data_line:
-            data_array = data.split(' ')
-            # Read data parsed like 'POSITION XXX YYY ZZZ' to test
-            if len(data_array) == 4 and data_array[0] == 'POSITION':
-                try:
-                    # Get the position
-                    x = float(data_array[1])
-                    y = float(data_array[2])
-                    z = float(data_array[3])
-                except ValueError:
-                    continue
+        (readables, _, _) = select.select([self._socket], [], [])
+        if readables:
+            data_raw = self._socket.recv(1024)
+            data_line = data_raw.decode('utf-8').split('\n')
+            for data in data_line:
+                data_array = data.split(' ')
+                # Read data parsed like 'POSITION XXX YYY ZZZ' to test
+                if len(data_array) == 4 and data_array[0] == 'POSITION':
+                    try:
+                        # Get the position
+                        x = float(data_array[1])
+                        y = float(data_array[2])
+                        z = float(data_array[3])
+                    except ValueError:
+                        continue
 
-                # Set the position
-                lockPosition.acquire(True)
-                relPosition[0] = x
-                relPosition[1] = y
-                relPosition[2] = z
-                lockPosition.release()
+                    # Set the position
+                    lockPosition.acquire(True)
+                    relPosition[0] = x
+                    relPosition[1] = y
+                    relPosition[2] = z
+                    lockPosition.release()
 
-    sock.close()
-
-t = threading.Thread(target=server)
-t.start()
+    def _free(self):
+        self._socket.close()
 
 class Controller:
     def __init__(self, controller):
         owner = controller.owner
         self._initPosition = owner.worldPosition.copy()
+        addr = bpy.context.scene.socket_address
+        self._server = None
+        try:
+            self._server = server(addr)
+        except (FileNotFoundError, ConnectionRefusedError):
+            raise
+        self._server.start()
+
+    def __del__(self):
+        if self._server is not None:
+            self._server.stop()
+            self._server.join()
 
     def run(self, controller):
         global lockPosition
@@ -89,6 +84,9 @@ static_controller = None
 def main(controller):
     global static_controller
     if static_controller is None:
-        static_controller = Controller(controller)
-
-    static_controller.run(controller)
+        try:
+            static_controller = Controller(controller)
+        except (FileNotFoundError, ConnectionRefusedError):
+            static_controller = None
+    if static_controller is not None:
+        static_controller.run(controller)

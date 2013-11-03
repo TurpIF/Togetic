@@ -20,6 +20,6 @@ Application utilisant une centrale inertiel pour récupérer la position d'un ob
 [Blender]: http://www.blender.org
 [Pierre Turpin]: https://github.com/TurpIF
 [Matthieu Falce]: #
-[Sarah Leclerc]: #
+[Sarah Leclerc]: https://github.com/SarahLeclerc
 [Stéphane Baudrand]: https://github.com/Stefjeanne
 [Franz Laugt]: https://github.com/znarf94

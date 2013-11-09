@@ -1,25 +1,35 @@
 import socket
-import numpy
+from numpy import *
 import pylab
-import Tkinter
+import Tkinter as Tk
+from Server import Server
+import threading
 
-class Client:
-        pass
+global data
+
+class Client(Server):
+	global connexion_to_sever
+	def __init__ (self):
+		Server.__init__(self)
+		connexion_to_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	def connect(self, addr, port):
+		connexion_to_server.connect((addr, port))
+			
 
 class Courbe:
 	global t                # Temps actuel
 	global delta_t          # Pas de temps
 	global retrace          # Retrace le graphique à chaque retrace millisecondes
 	global temps, valeur    # Vecteurs temps et valeur de fonction pour graphique
-	global courbe, etiquette # Variables contenant les détails des graphiques
+	global courbe, etiquette, manager # Variables contenant les détails des graphiques
 
 
 	# Cette méthode avance l'horloge, recalcule la fonction et retrace le tout
 
-	def run(self, data) :
+	def run(self) :
 		# Liste des variables globales actives dans cette méthode
-		global t, retrace, etiquette
-		global valeur, temps, courbe, delta_t
+		global t, retrace, etiquette, manager
+		global valeur, temps, courbe, delta_t, data
 
 		# On calcule le nouveau temps et la valeur de la fonction associée
 		t = t + delta_t
@@ -44,16 +54,19 @@ class Courbe:
 		manager.window.after(retrace,self.run)
 
 		
-	def __init__(self, data):
+	def __init__(self, valeur_initiale):
+		global t, retrace, etiquette, manager
+		global valeur, temps, courbe, delta_t, data
 		retrace =  100  # Temps en millisecondes 
 
 		# On définit les paramètres du graphique; une seule figure
 		fig = pylab.figure(1)
 		manager = pylab.get_current_fig_manager()   
 
-		# Initialise quelques variables variables
+		# Initialise quelques variables
 		t       = 0.0
 		delta_t = 0.1
+		data = valeur_initiale
 
 		#De même que les tableaux
 		temps = []

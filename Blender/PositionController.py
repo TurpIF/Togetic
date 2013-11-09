@@ -27,7 +27,7 @@ class server(Server):
         global lockPosition
         global relPosition
 
-        (readables, _, _) = select.select([self._socket], [], [])
+        (readables, _, _) = select.select([self._socket], [], [], 0)
         if readables:
             data_raw = self._socket.recv(1024)
             data_line = data_raw.decode('utf-8').split('\n')

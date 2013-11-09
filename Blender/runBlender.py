@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import subprocess
 
 # TODO use argparse to set these variables

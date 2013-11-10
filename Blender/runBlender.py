@@ -1,9 +1,19 @@
 #!/usr/bin/env python
 import subprocess
+import argparse
 
 # TODO use argparse to set these variables
-addr = '/tmp/togetic-blender'
-blender_file = './base.blend'
+# script params
+parser = argparse.ArgumentParser()
+parser.add_argument('input', metavar='input', type=str,
+        help='Filename of the socket to read')
+parser.add_argument('blender', metavar='blender', type=str,
+        help='Filename of the blender file to use')
+parsed_args = parser.parse_args()
+
+# shortcuts for command-line args
+addr = parsed_args.input
+blender_file = parsed_args.blender
 
 python_script = ''
 python_script += 'import bpy\n'

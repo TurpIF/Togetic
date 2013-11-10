@@ -22,6 +22,45 @@ L'architecture globale est la suivante :
 ## Affichage sur une courbe des données
 
 ## Blender
+Cette partie écoute continuellement sur un socket dont l'adresse est passée en
+paramètre. Les messages reçus sont alors vérifiés puis utilisés dans le cas où
+ils ont un format valide (voir le protocole de communication utilisé en sortie
+du filtre). Les autres messages sont tous ignorés. Les messages, lorsqu'ils
+sont utilisés, modifient une données partagées correspondant à la position
+relative de la personne. Pour éviter le blocage des appels systèmes pour lire
+sur le socket de communication, cette partie est encapsulé dans un fil
+d'exécution. La position relative qui est alors une mémoire partagé est
+protégée par un verrou de mutex.
+
+Un autre fil d'exécution est utilisé pour modifier la position de la caméra
+principale d'une scène blender. La lecture de la donnée partagée est également
+protégée par son mutex associé. Cette fonction est automatiquement appelé par
+blender et représente un controller blender activé par un sensor always à une
+fréquence prédéfinie. Lorsque cette fonction est appelé pour la première fois,
+elle crée le fil d'exécution d'écoute sur le socket. Ce dernier doit alors
+s'arreter lorsque le controller l'est.
+
+Pour lancer cette partie, il faut d'abord lancer blender. Un script de
+lancement est présent et permet également de controller l'adresse par paramètre
+l'adresse du socket de communication. Ce script ouvrira la scène blender,
+ajoutera un sensor always associé à un controlleur python exécutant la fonction
+définie ci-dessus. Ensuite, il placera la fenetre en plein écran avec une vue
+caméra sur la scène et lancera le moteur de jeu de blender.
+
+Son utilisation est :
+
+    ./runBlender.py --input=<socket_filename> --blender=<blender_filename>
+
+Pour le moment, le lancement de blender n'est pas totalement géré. Il faut donc
+exécuter manuellement le game engine de blender et préconfigurer la scène en
+ajoutant le sensor associé au controlleur.
+
+Il existe également un fichier contenant un serveur de test envoyant une
+position suivant une trajectoire de cercle pour tester cette partie de
+l'application. Il faut d'abord lancer le serveur puis blender :
+
+    ./TestServer.py --output=<path_to_socket> &
+    ./runBlender.py --input=<socket_filename> --blender=<blender_filename>
 
 ## Pourquoi Togetic ?
 Le nom du projet est vraiment simple à retrouver et il suffit d'appliquer une
@@ -41,6 +80,7 @@ Ce nombre correspond au numéro du pokémon Togetic.
 
 ## Requis
 - [Python 2.7][]
+- [Python 3.3][]
 - [Matplotlib][]
 - [Blender][] (utilisé avec la 2.69)
 
@@ -52,10 +92,11 @@ Ce nombre correspond au numéro du pokémon Togetic.
 - [Franz Laugt][]
 
 [Python 2.7]: http://www.python.org/download/releases/2.7
+[Python 3.3]: http://www.python.org/download/releases/3.3
 [Matplotlib]: http://matplotlib.org
 [Blender]: http://www.blender.org
 [Pierre Turpin]: https://github.com/TurpIF
-[Matthieu Falce]: #
+[Matthieu Falce]: https://github.com/ice3
 [Sarah Leclerc]: https://github.com/SarahLeclerc
 [Stéphane Baudrand]: https://github.com/Stefjeanne
 [Franz Laugt]: https://github.com/znarf94

@@ -1,13 +1,14 @@
 #!/bin/env python3
 
 import time
-from Server import ClientServer
-from Server import ListenerServer
+#from Server import ClientServer
+from Server import Pipe
+from Server import Listener
 
 def PositionServer(path):
-    class _PositionServer(ClientServer):
+    class _PositionServer(Pipe):
         def __init__(self, client):
-            ClientServer.__init__(self, client)
+            Pipe.__init__(self, client)
             self._time = 0
             self._dt = 0.01
 
@@ -31,7 +32,7 @@ def dummyPath(t):
 
 if __name__ == '__main__':
     addr = '/tmp/togetic-blender'
-    listener = ListenerServer(addr, PositionServer(dummyPath))
+    listener = Listener(addr, PositionServer(dummyPath))
     try:
         listener.start()
         while True:

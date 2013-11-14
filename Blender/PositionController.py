@@ -3,7 +3,7 @@ import mathutils
 import socket
 import os
 import select
-from Server import Server
+from Server import ConnectedPipe
 import bpy
 
 # Shared memory
@@ -12,46 +12,39 @@ lockPosition = threading.Lock()
 
 # Sample trajectory to test the module
 import math
-class server(Server):
+class server(ConnectedPipe):
     def __init__(self, addr):
-        Server.__init__(self)
+        ConnectedPipe.__init__(self, addr)
 
-        # Connect to the socket as a client
-        self._socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        try:
-            self._socket.connect(addr)
-        except (FileNotFoundError, ConnectionRefusedError):
-            raise
-
-    def _serve(self):
+    def _parseRecv(self, data_raw):
         global lockPosition
         global relPosition
 
-        (readables, _, _) = select.select([self._socket], [], [], 0)
-        if readables:
-            data_raw = self._socket.recv(1024)
-            data_line = data_raw.decode('utf-8').split('\n')
-            for data in data_line:
-                data_array = data.split(' ')
-                # Read data parsed like 'POSITION XXX YYY ZZZ' to test
-                if len(data_array) == 4 and data_array[0] == 'POSITION':
-                    try:
-                        # Get the position
-                        x = float(data_array[1])
-                        y = float(data_array[2])
-                        z = float(data_array[3])
-                    except ValueError:
-                        continue
+        data_line = data_raw.decode('utf-8').split('\n')
+        for data in data_line:
+            data_array = data.split(' ')
+            # Read data parsed like 'POSITION XXX YYY ZZZ' to test
+            if len(data_array) == 4 and data_array[0] == 'POSITION':
+                try:
+                    # Get the position
+                    x = float(data_array[1])
+                    y = float(data_array[2])
+                    z = float(data_array[3])
+                except ValueError:
+                    continue
 
-                    # Set the position
-                    lockPosition.acquire(True)
-                    relPosition[0] = x
-                    relPosition[1] = y
-                    relPosition[2] = z
-                    lockPosition.release()
+                # Set the position
+                lockPosition.acquire(True)
+                relPosition[0] = x
+                relPosition[1] = y
+                relPosition[2] = z
+                lockPosition.release()
 
-    def _free(self):
-        self._socket.close()
+    def _msgToSend(self):
+        pass
+
+    def _run(self):
+        pass
 
 class Controller:
     def __init__(self, controller):

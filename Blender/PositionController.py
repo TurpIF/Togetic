@@ -3,8 +3,11 @@ import mathutils
 import socket
 import os
 import select
-from Server import ConnectedPipe
 import bpy
+import sys
+sys.path += ['..']
+
+from Server import ClientHandler
 
 # Shared memory
 relPosition = mathutils.Vector((0, 1, 0))
@@ -12,9 +15,9 @@ lockPosition = threading.Lock()
 
 # Sample trajectory to test the module
 import math
-class server(ConnectedPipe):
+class server(ClientHandler):
     def __init__(self, addr):
-        ConnectedPipe.__init__(self, addr)
+        ClientHandler.__init__(self, addr)
 
     def _parseRecv(self, data_raw):
         global lockPosition

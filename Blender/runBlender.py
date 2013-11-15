@@ -1,13 +1,12 @@
 #!/usr/bin/env python
+
 import subprocess
 import argparse
 
-# TODO use argparse to set these variables
-# script params
 parser = argparse.ArgumentParser()
-parser.add_argument('input', metavar='input', type=str,
-        help='Filename of the socket to read')
-parser.add_argument('blender', metavar='blender', type=str,
+parser.add_argument('--input', required=True, metavar='input', type=str,
+        help='Filename of the socket to read in')
+parser.add_argument('--blender', required=True, metavar='blender', type=str,
         help='Filename of the blender file to use')
 parsed_args = parser.parse_args()
 

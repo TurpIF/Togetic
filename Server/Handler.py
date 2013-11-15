@@ -1,9 +1,8 @@
 import select
-import socket
 
 from Server.AbstractServer import AbstractServer
 
-class Pipe(AbstractServer):
+class Handler(AbstractServer):
     def __init__(self, client):
         """
         \brief  Initialise the server and stock the socket and address of the
@@ -61,13 +60,3 @@ class Pipe(AbstractServer):
         is non-blocking.
         """
         raise Exception('Not implemented yet')
-
-class ConnectedPipe(Pipe):
-    def __init__(self, addr):
-        # Connect to the socket as a client
-        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        try:
-            sock.connect(addr)
-        except (FileNotFoundError, ConnectionRefusedError):
-            raise
-        Pipe.__init__(self, (sock, addr))

@@ -1,14 +1,16 @@
 #!/bin/env python3
 
 import time
-#from Server import ClientServer
-from Server import Pipe
+import argparse
+import sys
+sys.path += ['..']
+from Server import Handler
 from Server import Listener
 
 def PositionServer(path):
-    class _PositionServer(Pipe):
+    class _PositionServer(Handler):
         def __init__(self, client):
-            Pipe.__init__(self, client)
+            Handler.__init__(self, client)
             self._time = 0
             self._dt = 0.01
 
@@ -31,7 +33,12 @@ def dummyPath(t):
     return (10 * math.cos(t), 10 * math.sin(t), 0)
 
 if __name__ == '__main__':
-    addr = '/tmp/togetic-blender'
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--output', required=True, metavar='output', type=str,
+            help='Filename of the socket to write in')
+    parsed_args = parser.parse_args()
+    addr = parsed_args.output
+
     listener = Listener(addr, PositionServer(dummyPath))
     try:
         listener.start()

@@ -10,15 +10,12 @@ sys.path += ['..']
 from Server import ClientHandler
 
 # Shared memory
-relPosition = mathutils.Vector((0, 1, 0))
+relPosition = [0, 0, 0, 0, 0, 0]
 lockPosition = threading.Lock()
 
 # Sample trajectory to test the module
 import math
 class server(ClientHandler):
-    def __init__(self, addr):
-        ClientHandler.__init__(self, addr)
-
     def _parseRecv(self, data_raw):
         global lockPosition
         global relPosition
@@ -26,13 +23,16 @@ class server(ClientHandler):
         data_line = data_raw.decode('utf-8').split('\n')
         for data in data_line:
             data_array = data.split(' ')
-            # Read data parsed like 'POSITION XXX YYY ZZZ' to test
-            if len(data_array) == 4 and data_array[0] == 'POSITION':
+            # Read data parsed like 'POSITION X Y Z THETA PHI PSY' to test
+            if len(data_array) == 7 and data_array[0] == 'TOGETIC':
                 try:
                     # Get the position
                     x = float(data_array[1])
                     y = float(data_array[2])
                     z = float(data_array[3])
+                    theta = float(data_array[4])
+                    phi = float(data_array[5])
+                    psy = float(data_array[6])
                 except ValueError:
                     continue
 
@@ -41,6 +41,9 @@ class server(ClientHandler):
                 relPosition[0] = x
                 relPosition[1] = y
                 relPosition[2] = z
+                relPosition[3] = theta
+                relPosition[4] = phi
+                relPosition[5] = psy
                 lockPosition.release()
 
     def _msgToSend(self):
@@ -62,9 +65,9 @@ class Controller:
         self._server.start()
 
     def __del__(self):
-        if self._server is not None:
+        if self._server is not None and self._server.isAlive():
             self._server.stop()
-            self._server.join()
+            self._server.join(2)
 
     def run(self, controller):
         global lockPosition
@@ -73,8 +76,15 @@ class Controller:
         owner = controller.owner
 
         lockPosition.acquire(True)
-        owner.worldPosition = self._initPosition + relPosition
+        x = relPosition[0]
+        y = relPosition[1]
+        z = relPosition[2]
+        theta = relPosition[3]
+        phi = relPosition[4]
+        psy = relPosition[5]
         lockPosition.release()
+
+        owner.worldPosition = self._initPosition + mathutils.Vector((x, y, z))
 
 static_controller = None
 def main(controller):

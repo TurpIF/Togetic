@@ -1,4 +1,4 @@
-import select
+from select import select
 
 from Server.AbstractServer import AbstractServer
 
@@ -22,7 +22,7 @@ class Handler(AbstractServer):
         """
         \brief Select usable IOs and send/recv in consequence.
         """
-        selection = select.select([self._socket], [self._socket], [], 0)
+        selection = select([self._socket], [self._socket], [], 0)
         if selection[0]:
             data = self._socket.recv(4096)
             self._parseRecv(data)

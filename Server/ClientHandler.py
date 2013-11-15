@@ -5,10 +5,14 @@ from Server.Handler import Handler
 class ClientHandler(Handler):
     def __init__(self, addr):
         # Connect to the socket as a client
+        self._addr = addr
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        Handler.__init__(self, (sock, addr))
+
+    def start(self):
         try:
-            sock.connect(addr)
+            self._socket.connect(self._addr)
         except (FileNotFoundError, ConnectionRefusedError):
             raise
-        Handler.__init__(self, (sock, addr))
+        Handler.start(self)
 

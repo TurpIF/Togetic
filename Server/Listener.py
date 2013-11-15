@@ -24,19 +24,26 @@ class Listener(AbstractServer):
         a new instance of `clientServer` and start it immedialty.
         """
         AbstractServer.__init__(self)
+        self._addr = addr
         self._socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        if os.path.exists(addr):
+        self._clients = []
+        self._pipe = pipe
+
+    def start(self):
+        if os.path.exists(self._addr):
             try:
-                os.remove(addr)
+                os.remove(self._addr)
             except OSError:
                 raise
         try:
-            self._socket.bind(addr)
+            self._socket.bind(self._addr)
         except socket.error:
             self._socket.close()
             raise
-        self._clients = []
-        self._pipe = pipe
+        except OSError:
+            self._socket.close()
+            raise
+        AbstractServer.start(self)
 
     def _serve(self):
         """
@@ -63,7 +70,5 @@ class Listener(AbstractServer):
         for client in self._clients:
             client.stop()
             client.join(2)
-            if client.isAlive():
-                client.terminate()
         self._socket.close()
 

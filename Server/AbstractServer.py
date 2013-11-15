@@ -42,6 +42,7 @@ class AbstractServer(threading.Thread):
             except Exception as e:
                 print('Server `', self, '` stopped by an exception :', e, file=sys.stderr)
                 self.stop()
+                raise
         self._free()
 
     def _serve(self):

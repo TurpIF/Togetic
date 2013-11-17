@@ -79,10 +79,10 @@ Lorsque la liste L contient la liste des prénoms des auteurs, on a alors N=176.
 Ce nombre correspond au numéro du pokémon Togetic.
 
 ## Requis
-- [Python 2.7][]
 - [Python 3.3][]
 - [Matplotlib][]
 - [Blender][] (utilisé avec la 2.69)
+- [Quick2wire][]
 
 ## Auteurs
 - [Pierre Turpin][]
@@ -91,7 +91,6 @@ Ce nombre correspond au numéro du pokémon Togetic.
 - [Stéphane Baudrand][]
 - [Franz Laugt][]
 
-[Python 2.7]: http://www.python.org/download/releases/2.7
 [Python 3.3]: http://www.python.org/download/releases/3.3
 [Matplotlib]: http://matplotlib.org
 [Blender]: http://www.blender.org
@@ -100,3 +99,4 @@ Ce nombre correspond au numéro du pokémon Togetic.
 [Sarah Leclerc]: https://github.com/SarahLeclerc
 [Stéphane Baudrand]: https://github.com/Stefjeanne
 [Franz Laugt]: https://github.com/znarf94
+[Quick2wire]: https://github.com/quick2wire/quick2wire-python-api

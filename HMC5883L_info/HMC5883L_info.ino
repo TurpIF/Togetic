@@ -53,6 +53,9 @@ void setup()
 void loop()
 {
   char c;
+  static float xmin = 4096, xmax = -4096, ymin = 4096, ymax = -4096;
+  float xscaled = 0, yscaled = 0;
+  float heading;
 
   // Wait request
   do {
@@ -68,7 +71,21 @@ void loop()
   int MilliGauss_OnThe_XAxis = scaled.XAxis;// (or YAxis, or ZAxis)
 
   // Calculate heading when the magnetometer is level, then correct for signs of axis.
-  float heading = atan2(scaled.YAxis, scaled.XAxis);
+  //float heading = atan2(scaled.YAxis, scaled.XAxis);
+
+  // New method to compute heading
+  if(scaled.XAxis < xmin)
+    xmin = scaled.XAxis;
+  if(scaled.YAxis < ymin)
+    ymin = scaled.YAxis;
+  if(scaled.XAxis > xmax)
+    xmax = scaled.XAxis;
+  if(scaled.YAxis > ymax)
+    ymax = scaled.YAxis;
+
+  xscaled = (scaled.XAxis - (xmin + xmax)/2.0)/(xmax - xmin);
+  yscaled = (scaled.YAxis - (ymin + ymax)/2.0)/(ymax - ymin);
+  heading = atan2(yscaled, xscaled);
   
   // Once you have your heading, you must then add your 'Declination Angle', which is the 'Error' of the magnetic field in your location.
   // Find yours here: http://www.magnetic-declination.com/
@@ -89,7 +106,7 @@ void loop()
   float headingDegrees = heading * 180/M_PI; 
 
   // Output the data via the serial port.
-  Output(raw, scaled, heading, headingDegrees);
+  Output(raw, scaled, heading, headingDegrees, xmin, xmax);
 
   // Normally we would delay the application by 66ms to allow the loop
   // to run at 15Hz (default bandwidth for the HMC5883L).
@@ -99,7 +116,7 @@ void loop()
 }
 
 // Output the data down the serial port.
-void Output(MagnetometerRaw raw, MagnetometerScaled scaled, float heading, float headingDegrees)
+void Output(MagnetometerRaw raw, MagnetometerScaled scaled, float heading, float headingDegrees, float xmin, float xmax)
 {
 //   Serial.print("Raw:\t");
 //   Serial.print(raw.XAxis);
@@ -136,6 +153,11 @@ void Output(MagnetometerRaw raw, MagnetometerScaled scaled, float heading, float
    Serial.print(scaled.YAxis);
    Serial.print(", \"z\" : ");   
    Serial.print(scaled.ZAxis);
+   Serial.print(" }, \"debug\" : ");
+   Serial.print("{ \"xmin\" : ");
+   Serial.print(xmin);
+   Serial.print(", \"xmax\" : ");
+   Serial.print(xmax);
    Serial.print(" }, \"heading\" : ");
    Serial.print(heading);
    Serial.print(", \"headingDegrees\" : ");

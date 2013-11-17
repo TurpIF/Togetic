@@ -14,7 +14,6 @@ def update_lines(num, data, lines):	#, texts):
 	time.sleep(.02)
 	l = ser.readline()
 	d = json.loads(l)
-#	print(d['raw'])
 #	print(num)
 	if update_lines.counter > 3:
 #		texts[0].set_text('Raw::X = ' + str(d['raw']['x']))
@@ -34,6 +33,7 @@ def update_lines(num, data, lines):	#, texts):
 		print('Scaled::Z = ' + str(d['scaled']['z']))
 		print('Heading (rad) = ' + str(d['heading']))
 		print('Heading (deg) = ' + str(d['headingDegrees']))
+		print(d['debug'])
 
 	if update_lines.counter < npoints + 3 :
 		data[0,num] = num

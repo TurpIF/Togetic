@@ -1,7 +1,6 @@
-# A compléter: limites éventuelles des composants
-# TODO gérer les imports
-#import
- import sys
+#!/bin/env python3
+
+import sys
 sys.path += ['..']
 
 from shm import shm
@@ -21,9 +20,9 @@ class ThreadedSensor(AbstractServer):
         shm_accel = shm()
 		shm_gyro = shm()
 		shm_magnet = shm()
-        self._accel_handler = AccelHandler()
-        self._gyro_handler = GyroHandler()
-		self._magnet_handler = MagnetHandler()
+        self._accel_handler = AccelHandler(shm_accel)
+        self._gyro_handler = GyroHandler(shm_gyro)
+		self._magnet_handler = MagnetHandler(shm_magnet)
         self._emitter = Listener(addr_output,
 			Emitter(shm_accel, shm_gyro, shm_magnet))
 

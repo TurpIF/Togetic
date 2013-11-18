@@ -7,17 +7,19 @@ void setup() {
   Serial.begin(115200);
   Wire.begin();
   accel = ADXL345();
+  accel.powerOn();
   // accel.SetMeasurementMode(Measurement_Continuous);
 }
 
 void loop() {
-  while(Serial.read(); != 'r');
-  AccelerometerRaw raw = accel.ReadRawAxis();
-  Serial.print(raw.XAxis);
+  while(Serial.read() != 'r');
+  int x, y, z;
+  accel.readAccel(&x, &y, &z);
+  Serial.print(x);
   Serial.print(" ");
-  Serial.print(raw.YAxis);
+  Serial.print(y);
   Serial.print(" ");
-  Serial.println(raw.ZAxis);
+  Serial.println(z);
   // delay(66);
 }
 

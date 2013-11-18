@@ -1,18 +1,18 @@
 #include <Wire.h>
-#include <HMC5883L.h>
+#include <ADXL345.h>
 
-static HMC5883L compass;
+static ADXL345 accel;
 
 void setup() {
   Serial.begin(115200);
   Wire.begin();
-  compass = HMC5883L();
-  compass.SetMeasurementMode(Measurement_Continuous);
+  accel = ADXL345();
+  // accel.SetMeasurementMode(Measurement_Continuous);
 }
 
 void loop() {
   while(Serial.read(); != 'r');
-  MagnetometerRaw raw = compass.ReadRawAxis();
+  AccelerometerRaw raw = accel.ReadRawAxis();
   Serial.print(raw.XAxis);
   Serial.print(" ");
   Serial.print(raw.YAxis);

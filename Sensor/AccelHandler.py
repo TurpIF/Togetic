@@ -20,11 +20,16 @@ class AccelHandler(AbstractServer):
     def start(self):
         with i2c.I2CMaster() as bus:
             bus.transaction(
-                i2c.writing_bytes(self._addr, self._reg_power_ctl, 0x08),
-                i2c.writing_bytes(self._addr, self._reg_data_format, 0x0C),
-                i2c.writing_bytes(self._addr, self._reg_fifo_ctl, 0x00),
-                i2c.writing_bytes(self._addr, self._reg_int_enable, 0x00)
-            )
+                i2c.writing_bytes(self._addr, self._reg_power_ctl, 0x0))
+            bus.transaction(
+                i2c.writing_bytes(self._addr, self._reg_power_ctl, 0x10))
+            bus.transaction(
+                i2c.writing_bytes(self._addr, self._reg_power_ctl, 0x08))
+            # bus.transaction(
+            #     i2c.writing_bytes(self._addr, self._reg_data_format, 0x0C),
+            #     i2c.writing_bytes(self._addr, self._reg_fifo_ctl, 0x00),
+            #     i2c.writing_bytes(self._addr, self._reg_int_enable, 0x00)
+            # )
         AbstractServer.start(self)
 
     def _free(self):
@@ -41,6 +46,6 @@ class AccelHandler(AbstractServer):
         x = (x1 << 8) | x0
         y = (y1 << 8) | y0
         z = (z1 << 8) | z0
-        print(x, y, z)
+        print(x0, x1, y0, y1, z0, z1)
         time.sleep(0.02)
         # self._shm.data = (x, y, z)

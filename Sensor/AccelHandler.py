@@ -14,7 +14,7 @@ class AccelHandler(AbstractServer):
         self._reg_data_format = 0x31
         self._reg_fifo_ctl = 0x38
         self._reg_int_enable = 0x2E
-	
+
     def start(self):
         with self._bus:
             self._bus.transaction(
@@ -32,7 +32,7 @@ class AccelHandler(AbstractServer):
             x0, x1, y0, y1, z0, z1 = self._bus.transaction(
                 i2c.writing_bytes(self._addr, self._reg_data),
                 i2c.reading(self._addr, 6))[0]
-            x = (x1 << 8) | x0
-            y = (y1 << 8) | y0
-            z = (z1 << 8) | z0
-            self._shm.data = (x, y, z)
+        x = (x1 << 8) | x0
+        y = (y1 << 8) | y0
+        z = (z1 << 8) | z0
+        self._shm.data = (x, y, z)

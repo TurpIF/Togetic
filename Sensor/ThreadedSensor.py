@@ -3,6 +3,7 @@
 import sys
 sys.path += ['..']
 
+import time
 from shm import shm
 
 from Server.AbstractServer import AbstractServer
@@ -20,11 +21,11 @@ class ThreadedSensor(AbstractServer):
         shm_accel = shm()
         shm_gyro = shm()
         shm_magnet = shm()
-        # self._accel_handler = AccelHandler(shm_accel)
-        # self._gyro_handler = GyroHandler(shm_gyro)
+        self._accel_handler = AccelHandler(shm_accel)
+        self._gyro_handler = GyroHandler(shm_gyro)
         self._magnet_handler = MagnetHandler(shm_magnet)
-        # self._emitter = Listener(addr_output,
-        #     Emitter(shm_accel, shm_gyro, shm_magnet))
+        self._emitter = Listener(addr_output,
+            Emitter(shm_accel, shm_gyro, shm_magnet))
 
     def start(self):
         # self._accel_handler.start()
@@ -34,14 +35,14 @@ class ThreadedSensor(AbstractServer):
         AbstractServer.start(self)
 
     def _serve(self):
-        pass
+        time.sleep(0.2)
 
     def _free(self):
         pass
-        # for s in [self._accel_handler, self._gyro_handler,
-        #         self._magnet_handler, self._emitter]:
-        #     s.stop()
-        #     s.join(2)
+        for s in [self._accel_handler, self._gyro_handler,
+                self._magnet_handler, self._emitter]:
+            s.stop()
+            s.join(2)
 
 if __name__ == '__main__':
     addr_out = '/tmp/togetic-sensor'
@@ -49,7 +50,7 @@ if __name__ == '__main__':
     try:
         f.start()
         while True:
-            pass
+            time.sleep(0.2)
     except KeyboardInterrupt:
         f.stop()
         f.join(2)

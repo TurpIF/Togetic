@@ -42,4 +42,4 @@ class MagnetHandler(AbstractServer):
         y = (y1 << 8) | y0
         z = (z1 << 8) | z0
         time.sleep(0.02)
-        self._shm.data = (x, y, z)
+        # self._shm.data = (x, y, z)

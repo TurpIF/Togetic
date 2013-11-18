@@ -3,6 +3,7 @@
 import sys
 sys.path += ['..']
 
+import time
 from shm import shm
 
 from Server.AbstractServer import AbstractServer
@@ -43,7 +44,7 @@ if __name__ == '__main__':
     try:
         f.start()
         while True:
-            pass
+            time.sleep(0.5)
     except KeyboardInterrupt:
         f.stop()
         f.join(2)

@@ -20,27 +20,28 @@ class ThreadedSensor(AbstractServer):
         shm_accel = shm()
         shm_gyro = shm()
         shm_magnet = shm()
-        self._accel_handler = AccelHandler(shm_accel)
-        self._gyro_handler = GyroHandler(shm_gyro)
+        # self._accel_handler = AccelHandler(shm_accel)
+        # self._gyro_handler = GyroHandler(shm_gyro)
         self._magnet_handler = MagnetHandler(shm_magnet)
-        self._emitter = Listener(addr_output,
-            Emitter(shm_accel, shm_gyro, shm_magnet))
+        # self._emitter = Listener(addr_output,
+        #     Emitter(shm_accel, shm_gyro, shm_magnet))
 
     def start(self):
-        self._accel_handler.start()
-        self._gyro_handler.start()
+        # self._accel_handler.start()
+        # self._gyro_handler.start()
         self._magnet_handler.start()
-        self._emitter.start()
+        # self._emitter.start()
         AbstractServer.start(self)
 
     def _serve(self):
         pass
 
     def _free(self):
-        for s in [self._accel_handler, self._gyro_handler,
-                self._magnet_handler, self._emitter]:
-            s.stop()
-            s.join(2)
+        pass
+        # for s in [self._accel_handler, self._gyro_handler,
+        #         self._magnet_handler, self._emitter]:
+        #     s.stop()
+        #     s.join(2)
 
 if __name__ == '__main__':
     addr_out = '/tmp/togetic-sensor'

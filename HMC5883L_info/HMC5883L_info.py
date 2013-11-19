@@ -11,11 +11,12 @@ def update_lines(num, data, lines):
     update_lines.counter += 1
     ser.write('r')
     l = ser.readline()
-    d = json.loads(l)
-    x = d['raw']['x']
-    y = d['raw']['y']
-    z = d['raw']['z']
-    # x, y, z = map(float, l.split(' '))
+    # d = json.loads(l)
+    # x = d['raw']['x']
+    # y = d['raw']['y']
+    # z = d['raw']['z']
+    x, y, z = map(float, l.split(' '))
+    print(x, y, z)
 
     if update_lines.counter < npoints + 3:
         data[0, num] = num

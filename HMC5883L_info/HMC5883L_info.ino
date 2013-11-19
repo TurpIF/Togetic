@@ -11,7 +11,7 @@ void setup() {
 }
 
 void loop() {
-  while(Serial.read(); != 'r');
+  while(Serial.read() != 'r');
   MagnetometerRaw raw = compass.ReadRawAxis();
   Serial.print(raw.XAxis);
   Serial.print(" ");

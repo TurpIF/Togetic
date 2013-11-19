@@ -8,7 +8,6 @@ void setup() {
   Wire.begin();
   accel = ADXL345();
   accel.powerOn();
-  // accel.SetMeasurementMode(Measurement_Continuous);
 }
 
 void loop() {

@@ -3,7 +3,7 @@ import socket
 from numpy import *
 import pylab
 #import Tkinter as Tk
-import ClientHandler
+from Server import ClientHandler
 import threading
 import Queue
 import Tab_queue

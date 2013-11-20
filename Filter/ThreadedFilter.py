@@ -30,12 +30,14 @@ class ThreadedFilter(AbstractServer):
         AbstractServer.start(self)
 
     def _serve(self):
-        pass
+        time.sleep(0.5)
 
     def _free(self):
         for s in [self._receiver, self._handler, self._emitter]:
+            print('Stopping ', s)
             s.stop()
             s.join(2)
+            print(s, 'stopped')
 
 if __name__ == '__main__':
     addr_in = '/tmp/togetic-input'
@@ -48,3 +50,4 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         f.stop()
         f.join(2)
+        sys.exit()

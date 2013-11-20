@@ -1,4 +1,4 @@
-#!/bin/env python2
+#!/bin/env python3
 
 import sys
 sys.path += ['..']
@@ -11,54 +11,48 @@ from Server.AbstractServer import AbstractServer
 from Server.Listener import Listener
 
 from Sensor.Emitter import Emitter
-from Sensor.AccelHandler import AccelHandler
-from Sensor.MagnetHandler import MagnetHandler
-from Sensor.GyroHandler import GyroHandler
+from Sensor.SerialHandler import SerialHandler
 
 class ThreadedSensor(AbstractServer):
-    def __init__(self, addr_output):
+    def __init__(self, addr_input, addr_output):
         AbstractServer.__init__(self)
 
         shm_accel = shm()
         shm_gyro = shm()
         shm_magnet = shm()
-        print '1yoho'
-        shm_serial = shm(serial.Serial('/dev/ttyACM0', 115200, timeout=0.1))
-        print '2yoho'
-        self._accel_handler = AccelHandler(shm_serial, shm_accel)
-        print '3yoho'
-        self._gyro_handler = GyroHandler(shm_serial, shm_gyro)
-        print '4yoho'
-        self._magnet_handler = MagnetHandler(shm_serial, shm_magnet)
-        print '5yoho'
+        shm_serial = shm(serial.Serial(addr_input, 115200, timeout=0.01))
+        self._accel_handler = SerialHandler('a', shm_serial, shm_accel)
+        self._gyro_handler = SerialHandler('r', shm_serial, shm_gyro)
+        self._magnet_handler = SerialHandler('c', shm_serial, shm_magnet)
         self._emitter = Listener(addr_output,
             Emitter(shm_accel, shm_gyro, shm_magnet))
-        print '6yoho'
 
     def start(self):
-        self._accel_handler.start()
-        self._gyro_handler.start()
-        self._magnet_handler.start()
-        self._emitter.start()
+        for s in [self._accel_handler, self._gyro_handler,
+                self._magnet_handler, self._emitter]:
+            s.start()
         AbstractServer.start(self)
 
     def _serve(self):
-        time.sleep(0.2)
+        time.sleep(0.5)
 
     def _free(self):
-        pass
         for s in [self._accel_handler, self._gyro_handler,
                 self._magnet_handler, self._emitter]:
+            print('Stopping ', s)
             s.stop()
             s.join(2)
+            print(s, 'stopped')
 
 if __name__ == '__main__':
-    addr_out = '/tmp/togetic-sensor'
-    f = ThreadedSensor(addr_out)
+    addr_input = '/dev/ttyACM1'
+    addr_output = '/tmp/togetic-sensor'
+    f = ThreadedSensor(addr_input, addr_output)
     try:
         f.start()
         while True:
-            time.sleep(0.2)
+            time.sleep(0.5)
     except KeyboardInterrupt:
         f.stop()
         f.join(2)
+        sys.exit()

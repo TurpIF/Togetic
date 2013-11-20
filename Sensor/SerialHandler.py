@@ -3,9 +3,10 @@ sys.path += ['..']
 
 from Server.AbstractServer import AbstractServer
 
-class AccelHandler(AbstractServer):
-    def __init__(self, shm_serial, shm):
+class SerialHandler(AbstractServer):
+    def __init__(self, request, shm_serial, shm):
         AbstractServer.__init__(self)
+        self._request = request
         self._shm_serial = shm_serial
         self._shm = shm
 
@@ -14,11 +15,11 @@ class AccelHandler(AbstractServer):
 
     def _serve(self):
         self._shm_serial.acquire()
-        self._shm_serial.get(False).write('a')
+        self._shm_serial.get(False).write(bytearray(self._request, 'ascii'))
         l = self._shm_serial.get(False).readline()
         self._shm_serial.release()
-        mes = l.split(' ')
-        print self, mes
+        mes = l.decode('ascii').split()
+        print(self, mes)
         if len(mes) == 3:
             try:
                 x, y, z = map(float, mes)

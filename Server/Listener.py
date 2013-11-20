@@ -37,6 +37,7 @@ class Listener(AbstractServer):
                 raise
         try:
             self._socket.bind(self._addr)
+            self._socket.listen(5)
         except socket.error:
             self._socket.close()
             raise
@@ -55,7 +56,6 @@ class Listener(AbstractServer):
         """
         (readables, _, _) = select.select([self._socket], [], [], 0)
         if self._socket in readables:
-            self._socket.listen(1)
             client = self._socket.accept()
             server = self._pipe(client)
             server.start()

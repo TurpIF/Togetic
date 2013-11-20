@@ -17,7 +17,7 @@ sys.path += ['..']
 ### Seulement une fois que ça fonctionne
 
 
-_queue = Tab_queue(6).getTab()  #Tableau de données
+_queue = Tab_queue(6).getTab()  #Tableau de données, 1 queue pour chaque parametre
 lock = threading.Lock()
 
 

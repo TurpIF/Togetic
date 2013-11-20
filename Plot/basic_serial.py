@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 
 import serial
 import json
@@ -11,10 +11,6 @@ def update_lines(num, data, lines):
     update_lines.counter += 1
     ser.write('r')
     l = ser.readline()
-    # d = json.loads(l)
-    # x = d['raw']['x']
-    # y = d['raw']['y']
-    # z = d['raw']['z']
     x, y, z = map(float, l.split(' '))
     print(x, y, z)
 

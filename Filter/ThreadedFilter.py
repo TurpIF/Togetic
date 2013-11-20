@@ -1,30 +1,17 @@
 #!/bin/env python3
 
 import sys
-from threading import Lock
-
 sys.path += ['..']
+
+import time
+from shm import shm
+
 from Server.AbstractServer import AbstractServer
 from Server.Listener import Listener
 
 from Filter.Receiver import Receiver
 from Filter.Emitter import Emitter
 from Filter.FilterHandler import FilterHandler
-
-class shm:
-    def __init__(self):
-        self._data = None
-        self._lock = Lock()
-
-    def set(self, data):
-        with self._lock:
-            self._data = data
-
-    def get(self):
-        with self._lock:
-            return self._data
-
-    data = property(get, set)
 
 class ThreadedFilter(AbstractServer):
     def __init__(self, addr_input, addr_output):
@@ -48,8 +35,7 @@ class ThreadedFilter(AbstractServer):
     def _free(self):
         for s in [self._receiver, self._handler, self._emitter]:
             s.stop()
-            if s.isAlive():
-                s.join(2)
+            s.join(2)
 
 if __name__ == '__main__':
     addr_in = '/tmp/togetic-input'
@@ -57,8 +43,8 @@ if __name__ == '__main__':
     f = ThreadedFilter(addr_in, addr_out)
     try:
         f.start()
+        while True:
+            time.sleep(0.5)
     except KeyboardInterrupt:
         f.stop()
         f.join(2)
-        if f.isAlive():
-            f.terminate()

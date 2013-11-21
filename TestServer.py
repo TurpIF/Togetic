@@ -2,10 +2,9 @@
 
 import time
 import argparse
-import sys
-sys.path += ['..']
-from Server import Handler
-from Server import Listener
+
+from Togetic.Server import Handler
+from Togetic.Server import Listener
 
 def PositionServer(path):
     class _PositionServer(Handler):

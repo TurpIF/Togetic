@@ -1,9 +1,4 @@
-#!/bin/env python3
-
-import sys
-
-sys.path += ['..']
-from Server import ClientHandler
+from Togetic.Server import ClientHandler
 
 class Receiver(ClientHandler):
     def __init__(self, addr, shm):

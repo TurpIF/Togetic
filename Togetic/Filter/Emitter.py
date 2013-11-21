@@ -1,9 +1,4 @@
-#!/bin/env python3
-
-import sys
-
-sys.path += ['..']
-from Server import Handler
+from Togetic.Server import Handler
 
 def Emitter(shm):
     class _Emitter(Handler):

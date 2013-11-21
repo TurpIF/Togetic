@@ -1,6 +1,6 @@
 from select import select
 
-from Server.AbstractServer import AbstractServer
+from Togetic.Server.AbstractServer import AbstractServer
 
 class Handler(AbstractServer):
     def __init__(self, client):

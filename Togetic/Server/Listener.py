@@ -2,7 +2,7 @@ import socket
 import os
 import select
 
-from Server.AbstractServer import AbstractServer
+from Togetic.Server.AbstractServer import AbstractServer
 
 class Listener(AbstractServer):
     def __init__(self, addr, pipe):

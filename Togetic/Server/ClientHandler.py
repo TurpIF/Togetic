@@ -1,6 +1,6 @@
 import socket
 
-from Server.Handler import Handler
+from Togetic.Server.Handler import Handler
 
 class ClientHandler(Handler):
     def __init__(self, addr):

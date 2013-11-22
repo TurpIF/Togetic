@@ -1,1 +1,1 @@
-from Togetic.Sensor.ThreadedSensor import ThreadedSensoSensor
+from Togetic.Sensor.ThreadedSensor import ThreadedSensor

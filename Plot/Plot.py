@@ -129,6 +129,6 @@ class Courbe(threading.Thread):
 if __name__ == '__main__':
     receiver=Receiver(42000)
     ay = Courbe(2)
-	receiver.start()
+    receiver.start()
     ay.start()
 

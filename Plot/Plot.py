@@ -3,7 +3,7 @@ import socket
 from numpy import *
 import pylab
 #import Tkinter as Tk
-from Server import ClientHandler
+import ClientHandler
 import threading
 import Queue
 import Tab_queue
@@ -17,12 +17,12 @@ sys.path += ['..']
 ### Seulement une fois que ça fonctionne
 
 
-_queue = Tab_queue(6).getTab()  #Tableau de données, 1 queue pour chaque parametre
+_queue = Tab_queue(6).getTab()  #Tableau de données
 lock = threading.Lock()
 
 
      
-class Receiver(ClientHandler):          #a modifier, inclure le choix du parametre à lire
+class Receiver(ClientHandler):
 
 	def __init__(self, addr):
 		ClientHandler._init_(self, addr)
@@ -31,14 +31,13 @@ class Receiver(ClientHandler):          #a modifier, inclure le choix du paramet
 		pass
             	
 	def _parseRecv(self, data_raw):
-		global lock
-		global data
+		global _queue
 
 		data_line = data_raw.decode('utf-8').split('\n')
 		for _data in data_line:
 			data_array = _data.split(' ')
-			# Read data parsed like 'POSITION X Y Z THETA PHI PSY' to test
-			if len(data_array) == 7 and data_array[0] == 'TOGETIC':
+			# Read data parsed like 'TIME X Y Z THETA PHI PSY' to test
+			if len(data_array) == 7 :
 				try:
 					# Get the position
 					x = float(data_array[1])
@@ -51,14 +50,12 @@ class Receiver(ClientHandler):          #a modifier, inclure le choix du paramet
 					 continue
 
 				# Set the position
-				# lock.acquire(True)
-				# data[0] = x
-				# data[1] = y
-				# data[2] = z
-				# data[3] = theta
-				# data[4] = phi
-				# data[5] = psy
-				# lockrelease()
+				_queue[0].put(x)
+				_queue[1].put(y)
+				_queue[2].put(z)
+				_queue[3].put(theta)
+				_queue[4].put(phi)
+				_queue[5].put(psy)
                            
      
 class Courbe(threading.Thread):
@@ -106,8 +103,6 @@ class Courbe(threading.Thread):
 
 			# Puis on place ces données dans deux tableaux
 			self.temps.append(self.t)
-
-			### C'est une variable partagé. Il faut lock puis release l'utilisation
 			self.valeur.append(_queue[self.indice].get())
 
 			# Met à jour les données dans le tableau associé avec le graphique
@@ -132,11 +127,8 @@ class Courbe(threading.Thread):
 ### Donne un cas d'utilisation avec lancement du serveur et de ton plot
 ### Tu pourras alors tester ton code
 if __name__ == '__main__':
-    data=[0, 2, 3, 5]
-    a = Courbe(2)
-    a.start()
-    for i in xrange(5):
-        data[2] += 1
-        time.sleep(3)
-    # Do things
+    receiver=Receiver(42000)
+    ay = Courbe(2)
+	receiver.start()
+    ay.start()
 

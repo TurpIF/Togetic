@@ -1,9 +1,9 @@
 from Togetic.Server import ClientHandler
 
 class Receiver(ClientHandler):
-    def __init__(self, addr, shm):
+    def __init__(self, addr, queue):
         ClientHandler.__init__(self, addr)
-        self._shm = shm
+        self._queue = queue
 
     def _msgToSend(self):
         pass
@@ -18,7 +18,7 @@ class Receiver(ClientHandler):
                 except ValueError:
                     return
                 else:
-                    self._shm.data = info
+                    self._queue.put(info)
 
     def _run(self):
         pass

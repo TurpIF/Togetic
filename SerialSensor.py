@@ -5,7 +5,6 @@ import Togetic.Sensor.ThreadedSensor
 if __name__ == '__main__':
     addr_input  = '/dev/ttyACM0'
     addr_output = '/tmp/togetic-sensor'
-
     sensor = Togetic.Sensor.ThreadedSensor(addr_input, addr_output)
     try:
         sensor.start()

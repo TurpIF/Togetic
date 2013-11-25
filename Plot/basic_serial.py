@@ -9,7 +9,7 @@ import matplotlib.animation as animation
 
 def update_lines(num, data, lines):
     update_lines.counter += 1
-    ser.write('r')
+    ser.write('a')
     l = ser.readline()
     x, y, z = map(float, l.split(' '))
     print(x, y, z)
@@ -36,7 +36,7 @@ npoints = 100
 period = 50
 update_lines.counter = 0
 
-ser = serial.Serial('/dev/ttyACM1', 115200, timeout=1)
+ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1)
 ser.write('r')
 time.sleep(0.5)
 for l in ser.readlines():

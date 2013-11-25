@@ -45,9 +45,10 @@ void readingCompass(int * x, int * y, int * z) {
 
 void loop() {
   char c = '\0';
-  while(c != 'a' || c != 'g' || c != 'c')
+  while(c != 'a' && c != 'g' && c != 'c') {
       c = Serial.read();
-  int x, y, z;
+  }
+  int x = 0, y = 0, z = 0;
   if(c == 'a')
       readingAccel(&x, &y, &z);
   else if(c == 'g')

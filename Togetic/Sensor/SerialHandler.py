@@ -1,3 +1,4 @@
+import time
 from Togetic.Server.AbstractServer import AbstractServer
 
 class SerialHandler(AbstractServer):
@@ -11,16 +12,21 @@ class SerialHandler(AbstractServer):
         pass
 
     def _serve(self):
+        time.sleep(0.01)
         self._shm_serial.acquire()
         self._shm_serial.get(False).write(bytearray(self._request, 'ascii'))
         l = self._shm_serial.get(False).readline()
         self._shm_serial.release()
-        mes = l.decode('ascii').split()
-        print(self, mes)
-        if len(mes) == 3:
-            try:
-                x, y, z = map(float, mes)
-            except ValueError:
-                pass
-            else:
-                self._shm.data = (x, y, z)
+        try:
+            mes = l.decode('ascii').split()
+        except UnicodeDecodeError:
+            pass
+        else:
+            print(self, mes)
+            if len(mes) == 3:
+                try:
+                    x, y, z = map(float, mes)
+                except ValueError:
+                    pass
+                else:
+                    self._shm.data = (x, y, z)

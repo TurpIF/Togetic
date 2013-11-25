@@ -18,7 +18,7 @@ class ThreadedSensor(AbstractServer):
         shm_compass = shm()
         shm_serial = shm(serial.Serial(addr_input, 115200, timeout=0.01))
         self._accel_handler = SerialHandler('a', shm_serial, shm_accel)
-        self._gyro_handler = SerialHandler('r', shm_serial, shm_gyro)
+        self._gyro_handler = SerialHandler('g', shm_serial, shm_gyro)
         self._compass_handler = SerialHandler('c', shm_serial, shm_compass)
         self._emitter = Listener(addr_output,
             Emitter(shm_accel, shm_gyro, shm_compass))

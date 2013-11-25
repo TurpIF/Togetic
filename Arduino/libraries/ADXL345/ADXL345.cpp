@@ -12,7 +12,7 @@
  * GNU License V2 for more details.                                        *
  *                                                                         *
  ***************************************************************************/
-#include "WProgram.h"
+#include "Arduino.h"
 #include "ADXL345.h"
 #include <Wire.h>
 
@@ -61,24 +61,24 @@ void ADXL345::get_Gxyz(double *xyz){
 // Writes val to address register on device
 void ADXL345::writeTo(byte address, byte val) {
   Wire.beginTransmission(DEVICE); // start transmission to device 
-  Wire.send(address);             // send register address
-  Wire.send(val);                 // send value to write
+  Wire.write(address);             // write register address
+  Wire.write(val);                 // write value to write
   Wire.endTransmission();         // end transmission
 }
 
 // Reads num bytes starting from address register on device in to _buff array
 void ADXL345::readFrom(byte address, int num, byte _buff[]) {
   Wire.beginTransmission(DEVICE); // start transmission to device 
-  Wire.send(address);             // sends address to read from
+  Wire.write(address);             // sends address to read from
   Wire.endTransmission();         // end transmission
 
   Wire.beginTransmission(DEVICE); // start transmission to device
   Wire.requestFrom(DEVICE, num);    // request 6 bytes from device
 
   int i = 0;
-  while(Wire.available())         // device may send less than requested (abnormal)
+  while(Wire.available())         // device may write less than requested (abnormal)
   { 
-    _buff[i] = Wire.receive();    // receive a byte
+    _buff[i] = Wire.read();    // read a byte
     i++;
   }
   if(i != num){

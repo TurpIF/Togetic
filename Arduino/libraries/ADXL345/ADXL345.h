@@ -12,7 +12,7 @@
  * GNU License V2 for more details.                                        *
  *                                                                         *
  ***************************************************************************/
-#include "WProgram.h"
+#include "Arduino.h"
 
 #ifndef ADXL345_h
 #define ADXL345_h

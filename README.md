@@ -84,6 +84,11 @@ Ce nombre correspond au numéro du pokémon Togetic.
 - [Blender][] (utilisé avec la 2.69)
 - [Quick2wire][]
 
+Bibliothèques Arduino :
+- [ADXL345][]
+- [HMC5883L][]
+- [L3G4200D][]
+
 ## Auteurs
 - [Pierre Turpin][]
 - [Matthieu Falce][]
@@ -100,3 +105,6 @@ Ce nombre correspond au numéro du pokémon Togetic.
 [Stéphane Baudrand]: https://github.com/Stefjeanne
 [Franz Laugt]: https://github.com/znarf94
 [Quick2wire]: https://github.com/quick2wire/quick2wire-python-api
+[ADXL345]: http://code.google.com/p/adxl345driver/
+[HMC5883L]: http://www.loveelectronics.co.uk/Tutorials/8/hmc5883l-tutorial-and-arduino-library
+[L3G4200D]: http://bildr.org/2011/06/l3g4200d-arduino/

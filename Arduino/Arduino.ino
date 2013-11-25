@@ -38,9 +38,9 @@ void readingGyro(int * x, int * y, int * z) {
 
 void readingCompass(int * x, int * y, int * z) {
   MagnetometerRaw raw = compass.ReadRawAxis();
-  *x = rax.XAxis;
-  *y = rax.YAxis;
-  *z = rax.ZAxis;
+  *x = raw.XAxis;
+  *y = raw.YAxis;
+  *z = raw.ZAxis;
 }
 
 void loop() {

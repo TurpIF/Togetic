@@ -1,8 +1,4 @@
-
-import sys
-
-sys.path += ['..']
-from Server import Handler
+from Togetic.Server import Handler
 
 def Emitter(shm_accel, shm_gyro, shm_magnet):
     class _Emitter(Handler):

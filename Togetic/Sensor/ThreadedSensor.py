@@ -1,17 +1,13 @@
-#!/bin/env python3
-
-import sys
-sys.path += ['..']
-
 import time
 import serial
-from shm import shm
 
-from Server.AbstractServer import AbstractServer
-from Server.Listener import Listener
+from Togetic.shm import shm
 
-from Sensor.Emitter import Emitter
-from Sensor.SerialHandler import SerialHandler
+from Togetic.Server.AbstractServer import AbstractServer
+from Togetic.Server.Listener import Listener
+
+from Togetic.Sensor.Emitter import Emitter
+from Togetic.Sensor.SerialHandler import SerialHandler
 
 class ThreadedSensor(AbstractServer):
     def __init__(self, addr_input, addr_output):

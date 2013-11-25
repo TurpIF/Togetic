@@ -1,9 +1,4 @@
-#!/bin/env python3
-
-import sys
-
-sys.path += ['..']
-from Server.AbstractServer import AbstractServer
+from Togetic.Server.AbstractServer import AbstractServer
 
 class FilterHandler(AbstractServer):
     def __init__(self, input_shm, output_shm):

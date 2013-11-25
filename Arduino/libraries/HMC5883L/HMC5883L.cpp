@@ -107,15 +107,15 @@ int HMC5883L::SetMeasurementMode(uint8_t mode)
 void HMC5883L::Write(int address, int data)
 {
   Wire.beginTransmission(HMC5883L_Address);
-  Wire.send(address);
-  Wire.send(data);
+  Wire.write(address);
+  Wire.write(data);
   Wire.endTransmission();
 }
 
 uint8_t* HMC5883L::Read(int address, int length)
 {
   Wire.beginTransmission(HMC5883L_Address);
-  Wire.send(address);
+  Wire.write(address);
   Wire.endTransmission();
   
   Wire.beginTransmission(HMC5883L_Address);
@@ -126,7 +126,7 @@ uint8_t* HMC5883L::Read(int address, int length)
   {
 	  for(uint8_t i = 0; i < length; i++)
 	  {
-		  buffer[i] = Wire.receive();
+		  buffer[i] = Wire.read();
 	  }
   }
   Wire.endTransmission();

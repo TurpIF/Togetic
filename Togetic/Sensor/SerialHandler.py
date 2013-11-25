@@ -1,7 +1,4 @@
-import sys
-sys.path += ['..']
-
-from Server.AbstractServer import AbstractServer
+from Togetic.Server.AbstractServer import AbstractServer
 
 class SerialHandler(AbstractServer):
     def __init__(self, request, shm_serial, shm):

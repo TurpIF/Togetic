@@ -1,17 +1,12 @@
-#!/bin/env python3
-
-import sys
-sys.path += ['..']
-
 import time
-from shm import shm
+from Togetic.shm import shm
 
-from Server.AbstractServer import AbstractServer
-from Server.Listener import Listener
+from Togetic.Server.AbstractServer import AbstractServer
+from Togetic.Server.Listener import Listener
 
-from Filter.Receiver import Receiver
-from Filter.Emitter import Emitter
-from Filter.FilterHandler import FilterHandler
+from Togetic.Filter.Receiver import Receiver
+from Togetic.Filter.Emitter import Emitter
+from Togetic.Filter.FilterHandler import FilterHandler
 
 class ThreadedFilter(AbstractServer):
     def __init__(self, addr_input, addr_output):
@@ -38,16 +33,3 @@ class ThreadedFilter(AbstractServer):
             s.stop()
             s.join(2)
             print(s, 'stopped')
-
-if __name__ == '__main__':
-    addr_in = '/tmp/togetic-input'
-    addr_out = '/tmp/togetic-out'
-    f = ThreadedFilter(addr_in, addr_out)
-    try:
-        f.start()
-        while True:
-            time.sleep(0.5)
-    except KeyboardInterrupt:
-        f.stop()
-        f.join(2)
-        sys.exit()

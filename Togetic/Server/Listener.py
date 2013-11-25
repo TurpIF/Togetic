@@ -2,19 +2,19 @@ import socket
 import os
 import select
 
-from Server.AbstractServer import AbstractServer
+from Togetic.Server.AbstractServer import AbstractServer
 
 class Listener(AbstractServer):
-    def __init__(self, addr, pipe):
+    def __init__(self, addr, handler):
 # TODO let chose the protocol and the type of the socket to use
 # TODO let chose the address more efficiently (filename of a socket or IP+PORT)
 # TODO Do some test on the arguments used
         """
         \brief Initialise the server to listen connexion on a socket.
 
-        \param addr Address where the socket is created
-        \param pipe Class inherited by Pipe class used to communicate with new
-                    clients.
+        \param addr     Address where the socket is created
+        \param handler  Class inherited by Handler class used to communicate
+                        with new clients.
 
         The socket is on the UNIX domain using the TCP protocol.
         Try to bind this socket to the given address. If a file `addr` already
@@ -27,7 +27,7 @@ class Listener(AbstractServer):
         self._addr = addr
         self._socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self._clients = []
-        self._pipe = pipe
+        self._handler = handler
 
     def start(self):
         if os.path.exists(self._addr):
@@ -57,7 +57,7 @@ class Listener(AbstractServer):
         (readables, _, _) = select.select([self._socket], [], [], 0)
         if self._socket in readables:
             client = self._socket.accept()
-            server = self._pipe(client)
+            server = self._handler(client)
             server.start()
             self._clients += [server]
 

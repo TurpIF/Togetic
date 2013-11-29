@@ -1,15 +1,23 @@
+import time
 from Togetic.Server import Handler
 
 def Emitter(shm_accel, shm_gyro, shm_magnet):
     class _Emitter(Handler):
         def _msgToSend(self):
-            data_accel = shm_accel.data
-            data_gyro = shm_gyro.data
-            data_magnet = shm_magnet.data
-            #data_str = 'TOGETIC ' + ' '.join(map(str, data))
-            # TODO
-            data_str = ''
-            return bytes(data_str + '\n', 'UTF-8')
+            if shm_accel.data is None:
+                return
+            if shm_gyro.data is None:
+                return
+            if shm_magnet.data is None:
+                return
+
+            data_accel = list(shm_accel.data)
+            data_gyro = list(shm_gyro.data)
+            data_magnet = list(shm_magnet.data)
+            data = [time.time()] + data_accel + data_gyro + data_magnet
+            str_data = ' '.join(map(str, data))
+            data_str = 'T ' + str_data
+            return bytes(data_str + '\n', 'ascii')
 
         def _parseRecv(self, data_raw):
             pass

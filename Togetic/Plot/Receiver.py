@@ -9,16 +9,16 @@ class Receiver(ClientHandler):
         pass
 
     def _parseRecv(self, data_raw):
-        data_line = data_raw.decode('UTF-8').split('\n')
+        data_line = data_raw.decode('ascii').split('\n')
         for data in data_line:
             data_array = data.split(' ')
-            if len(data_array) == 7 and data_array[0] == 'TOGETIC':
+            if len(data_array) == 8 and data_array[0] == 'T':
                 try:
                     info = map(float, data_array[1:])
                 except ValueError:
                     return
                 else:
-                    self._queue.put(info)
+                    self._queue.put(list(info))
 
     def _run(self):
         pass

@@ -5,8 +5,8 @@ def Emitter(shm):
         def _msgToSend(self):
             data = shm.data
             if data is not None:
-                data_str = 'TOGETIC ' + ' '.join(map(str, data))
-                return bytes(data_str + '\n', 'UTF-8')
+                data_str = 'T ' + ' '.join(map(str, data))
+                return bytes(data_str + '\n', 'ascii')
 
         def _parseRecv(self, data_raw):
             pass

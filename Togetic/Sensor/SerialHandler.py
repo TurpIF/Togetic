@@ -22,7 +22,7 @@ class SerialHandler(AbstractServer):
         except UnicodeDecodeError:
             pass
         else:
-            print(self, mes)
+            # print(self, mes)
             if len(mes) == 3:
                 try:
                     x, y, z = map(float, mes)

@@ -11,6 +11,7 @@ def update_lines(num, data, lines):
     update_lines.counter += 1
     ser.write('a')
     l = ser.readline()
+    print l
     x, y, z = map(float, l.split(' '))
     print(x, y, z)
 

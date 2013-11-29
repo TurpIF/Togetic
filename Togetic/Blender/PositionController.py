@@ -19,12 +19,12 @@ class PositionController:
     def run(self):
         data = self._shm.data
         if data is not None and len(data) == 7:
-            _, x, y, z, theta, phy, psy = data
-            # self._owner.worldPosition = self._initPosition \
-            #         + mathutils.Vector((x, y, z))
+            t, x, y, z, theta, phy, psy = data
+            self._owner.worldPosition = self._initPosition \
+                    + mathutils.Vector((x, y, z))
             ori = self._owner.orientation.to_euler()
             ori.x = theta
-            ori.y = 0
+            ori.y = phy
             ori.z = psy
             self._owner.orientation = ori
-            print(x, y, z, ori.x, ori.y, ori.z)
+            print(t, x, y, z, ori.x, ori.y, ori.z)

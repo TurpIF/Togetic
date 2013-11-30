@@ -9,7 +9,7 @@ class Receiver(ClientHandler):
         pass
 
     def _parseRecv(self, data_raw):
-        data_line = data_raw.decode('ascii').split('\n')
+        data_line = data_raw.split('\n')
         for data in data_line:
             data_array = data.split(' ')
             if len(data_array) == 11 and data_array[0] == 'T':

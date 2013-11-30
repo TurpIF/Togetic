@@ -16,7 +16,7 @@ def PositionServer(path):
         def _msgToSend(self):
             data_int = path(self._time)
             data = 'T ' + ' '.join(map(str, data_int))
-            return bytes(data + '\n', 'ascii')
+            return data + '\n'
 
         def _parseRecv(self, data):
             pass
@@ -29,7 +29,7 @@ def PositionServer(path):
 
 def dummyPath(t):
     import math
-    return (time.time(), 10 * math.cos(t), 10 * math.sin(t), 0, math.sin(t), math.cos(t), (math.cos(t) + math.sin(t)) / 2.0)
+    return (time.time(), 10 * math.cos(t), 10 * math.sin(t), 0, math.sin(t), math.cos(t), (math.cos(t) + math.sin(t)) / 2.0, 0, 0, 0)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

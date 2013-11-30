@@ -17,7 +17,7 @@ def Emitter(shm_accel, shm_gyro, shm_magnet):
             data = [time.time()] + data_accel + data_gyro + data_magnet
             str_data = ' '.join(map(str, data))
             data_str = 'T ' + str_data
-            return bytes(data_str + '\n', 'ascii')
+            return data_str + '\n'
 
         def _parseRecv(self, data_raw):
             pass

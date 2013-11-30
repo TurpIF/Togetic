@@ -5,31 +5,32 @@ from Togetic.Server.AbstractServer import AbstractServer
 class Handler(AbstractServer):
     def __init__(self, client):
         """
-        \brief  Initialise the server and stock the socket and address of the
+        \brief  Initialise the server and stock the file and address of the
                 client.
         """
         AbstractServer.__init__(self)
-        self._socket = client[0]
+        self._file = client[0]
         self._addr = client[1]
 
     def _free(self):
         """
         \brief Close the socket.
         """
-        self._socket.close()
+        self._file.close()
 
     def _serve(self):
         """
         \brief Select usable IOs and send/recv in consequence.
         """
-        selection = select([self._socket], [self._socket], [], 0)
+        selection = select([self._file], [], [], 0)
         if selection[0]:
-            data = self._socket.recv(4096)
-            self._parseRecv(data)
+            data = self._file.read(4096)
+            self._parseRecv(data.decode('ascii'))
+        selection = select([], [self._file], [], 0)
         if selection[1]:
             data = self._msgToSend()
             if data is not None:
-                self._socket.send(data)
+                self._file.write(bytes(data, 'ascii'))
         self._run()
 
     def _parseRecv(self, data):

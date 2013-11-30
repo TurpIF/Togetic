@@ -57,7 +57,9 @@ class Listener(AbstractServer):
         (readables, _, _) = select.select([self._socket], [], [], 0)
         if self._socket in readables:
             client = self._socket.accept()
-            server = self._handler(client)
+            file_socket = client[0].makefile('rwb', buffering=0)
+            file_addr = client[1]
+            server = self._handler((file_socket, file_addr))
             server.start()
             self._clients += [server]
 

@@ -6,7 +6,7 @@ def Emitter(shm):
             data = shm.data
             if data is not None:
                 data_str = 'T ' + ' '.join(map(str, data))
-                return bytes(data_str + '\n', 'ascii')
+                return data_str + '\n'
 
         def _parseRecv(self, data_raw):
             pass

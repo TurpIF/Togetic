@@ -31,6 +31,7 @@ class Handler(AbstractServer):
             data = self._msgToSend()
             if data is not None:
                 self._file.write(bytes(data, 'ascii'))
+                self._file.flush()
         self._run()
 
     def _parseRecv(self, data):

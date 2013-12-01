@@ -79,7 +79,7 @@ def update_lines(num, data, lines):
 npoints = 100
 period = 20
 update_lines.counter = 0
-nbr_data = 10
+nbr_data = 7
 
 thread = threading.Thread(target=read_data, args=(file_sock, queue, nbr_data))
 thread.start()

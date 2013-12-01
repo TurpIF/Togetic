@@ -8,9 +8,12 @@ class FilterHandler(AbstractServer):
         self._out_shm = output_shm
         self._time = None
 
-        self.gyro_sens = 6500000.536
-        self.accel_sens = 81920000
+        self.gyro_sens = 1
+        self.accel_sens = 1
 
+        self._x = 0
+        self._y = 0
+        self._z = 0
         self._pitch = 0
         self._roll = 0
         self._yaw = 0
@@ -31,22 +34,20 @@ class FilterHandler(AbstractServer):
 
             self._pitch += gyr_x * dt
             self._roll += gyr_y * dt
-            self._yaw = 0
+            self._yaw += gyr_z * dt
 
-            force = abs(acc_x) + abs(acc_y) + abs(acc_z)
-            if True or 8192 < force < 32768:
-                pitch_acc = math.atan2(acc_y, acc_z) * 180 / math.pi
-                self._pitch = self._pitch * 0.98 + pitch_acc * 0.02;
+            dt2 = dt * dt
+            self._x += acc_x * dt2
+            self._y += acc_y * dt2
+            self._z += acc_z * dt2
 
             self._pitch %= math.pi
             self._roll %= math.pi
             self._yaw %= math.pi
 
-            print((self._pitch, self._roll))
-
-            x = 0
-            y = 0
-            z = 0
+            x = self._x
+            y = self._y
+            z = self._z
             theta = self._pitch
             phi = self._roll
             psy = self._yaw

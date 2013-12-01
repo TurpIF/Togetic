@@ -29,7 +29,7 @@ def PositionServer(path):
 
 def dummyPath(t):
     import math
-    return (time.time(), 10 * math.cos(t), 10 * math.sin(t), 0, math.sin(t), math.cos(t), (math.cos(t) + math.sin(t)) / 2.0, 0, 0, 0)
+    return (time.time(), -10 * math.cos(t), -10 * math.sin(t), 0, math.sin(t), math.cos(t), (math.cos(t) + math.sin(t)) / 2.0, 0, 0, 0)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

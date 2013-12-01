@@ -1,31 +1,60 @@
 #!/usr/bin/env python2
 
-import json
 import time
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import math
 import socket
+from Queue import Queue
+import threading
+
+queue = Queue()
+
+def read_data(file_in, queue, nbr_data):
+    while True:
+        line = file_in.readline().strip().split(' ')
+        if len(line) == nbr_data + 1 and line[0] == 'T':
+            try:
+                f = list(map(float, line[1:]))
+            except ValueError:
+                pass
+            else:
+                queue.put(f)
+
+def linear_interpolation(x0, y0, x1, y1):
+    if x1 == x0:
+        return []
+    return [(y1 - y0) * (x - x0) / (x1 - x0) + y0
+            for x in xrange(int(x0), int(x1))]
+
+def x2time(x):
+    return x * 1000
+
+def update_plot(num, data, lines):
+    d = queue.get()
+    t = x2time(d[0])
+
+    if not hasattr(update_plot, 'old_time'):
+        update_plot.old_time = t
+    old_t = update_plot.old_time
+
+    if t - old_t < 1:
+        return lines
+    for i, y in enumerate(d[1:]):
+        data[i + 1, :-1] = data[i + 1, 1:]
+        data[i + 1, -1] = y
+
+    data[0] = np.linspace(0, 100, 100)
+    for i, l in enumerate(lines):
+        l.set_data(data[0], data[i + 1])
+
+    update_plot.old_time = t
+    return lines
 
 sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 sock.connect('./test')
 file_sock = sock.makefile('r', bufsize=0)
-
-def get_data():
-    # return [update_lines.counter, 20 * math.cos(update_lines.counter), 0, 0, 0]
-    # line = raw_input().split(' ')
-    line = file_sock.readline().strip().split(' ')
-    print line
-    if len(line) == nbr_data + 1 and line[0] == 'T':
-        try:
-            f = list(map(float, line[1:]))
-        except ValueError:
-            pass
-        else:
-            f[0] = update_lines.counter
-            return f
-    return [0] * nbr_data
 
 def update_lines(num, data, lines):
     update_lines.counter += 1
@@ -48,9 +77,12 @@ def update_lines(num, data, lines):
     return lines
 
 npoints = 100
-period = 50
+period = 20
 update_lines.counter = 0
 nbr_data = 10
+
+thread = threading.Thread(target=read_data, args=(file_sock, queue, nbr_data))
+thread.start()
 
 fig1 = plt.figure()
 plt.hold(True)
@@ -68,7 +100,7 @@ plt.ylim(-11, 11)
 plt.xlabel('x')
 plt.title('test')
 
-line_ani = animation.FuncAnimation(fig1, update_lines, npoints,
+line_ani = animation.FuncAnimation(fig1, update_plot, npoints,
         fargs=(data, lines), interval=period, blit=True)
 
 plt.show()

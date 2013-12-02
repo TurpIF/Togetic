@@ -2,18 +2,24 @@
 
 import sys
 import socket
+import time
 from random import random as rand
 from threading import Thread
 from queue import Queue
+from queue import Empty
 from PySide import QtCore
 from PySide.QtGui import *
 
-class Read(Thread):
+class Reader(Thread, QtCore.QObject):
+  speak = QtCore.Signal()
+
   def __init__(self, file_in, queue, nbr_data):
-    super(Read, self).__init__()
+    Thread.__init__(self)
+    QtCore.QObject.__init__(self)
     self._file_in = file_in
     self._queue = queue
     self._nbr_data = nbr_data
+    self._nbr = 0
     self._running = False
 
   def run(self):
@@ -26,7 +32,13 @@ class Read(Thread):
         except ValueError:
           pass
         else:
-          self._queue.put((f[1], f[1:]))
+          self._queue.put((f[0], f[1:]))
+          # print(f)
+          self._nbr += 1
+
+          if self._nbr > 42 * 0.1:
+            self.speak.emit()
+            self._nbr = 0
 
   def stop(self):
     self._running = False
@@ -46,12 +58,11 @@ class PlotController(QWidget):
     self._sock.connect('./test')
     self._file = self._sock.makefile('rb', buffering=0)
     self._queue = Queue()
-    self._thread = Read(self._file, self._queue, self._nbr_data)
-    self._thread.start()
+    self._thread = Reader(self._file, self._queue, self._nbr_data)
 
     self._scene = QGraphicsScene()
     self._view = QGraphicsView(self._scene)
-    self._view.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+    self._view.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
     self._view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 
     layout = QVBoxLayout()
@@ -59,6 +70,20 @@ class PlotController(QWidget):
     self.setLayout(layout)
 
     self.setWindowTitle("Plot")
+
+    self._thread.speak.connect(self._read_data)
+    self._thread.start()
+
+  def _read_data(self):
+    print('pute de merde', time.time(), self._queue.qsize())
+    while True:
+      try:
+        t, data = self._queue.get_nowait()
+      except Empty:
+        return
+      else:
+        for id, d in enumerate(data):
+          self.addPoint(id, t, d)
 
   def closeEvent(self, event):
     self.close()
@@ -86,9 +111,8 @@ class PlotController(QWidget):
       self._plots[id] = color, (x, y)
       self._scene.addLine(pos[0], pos[1], x, y, color)
 
-    if x > self._x_max \
-      or y < self._y_min or y > self._y_max:
-      self._x_max = max(self._x_max, x)
+    if y < self._y_min or y > self._y_max:
+      # self._x_max = max(self._x_max, x)
       self._y_min = min(self._y_min, y)
       self._y_max = max(self._y_max, y)
       self.fitInView()
@@ -109,7 +133,7 @@ if __name__ == "__main__":
   app = QApplication(sys.argv)
   controller = PlotController()
 
-  testAddPoint(controller)
+  # testAddPoint(controller)
 
   controller.show()
   sys.exit(app.exec_())

@@ -28,7 +28,9 @@ class PlotController(QWidget):
     if not id in self._plots:
       color = QColor(rand() * 255, rand() * 255, rand() * 255)
       pos = x, y
-      self._plots[id] = QPen(color), pos
+      pen = QPen(QBrush(color), 0, QtCore.Qt.SolidLine,
+          QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
+      self._plots[id] = pen, pos
     else:
       color, pos = self._plots[id]
       self._plots[id] = color, (x, y)

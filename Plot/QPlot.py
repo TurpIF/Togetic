@@ -12,17 +12,23 @@ class PlotController(QWidget):
     self._plots = {}
     self._y_min = 0
     self._y_max = 0
-    self._x_min = 0
+    self._x_size = 100
     self._x_max = 0
 
     self._scene = QGraphicsScene()
     self._view = QGraphicsView(self._scene)
+    self._view.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+    self._view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 
     layout = QVBoxLayout()
     layout.addWidget(self._view)
     self.setLayout(layout)
 
     self.setWindowTitle("Plot")
+
+  def resizeEvent(self, event):
+    self.fitInView()
+    super(PlotController, self).resizeEvent(event)
 
   def addPoint(self, id, x, y):
     if not id in self._plots:
@@ -36,24 +42,23 @@ class PlotController(QWidget):
       self._plots[id] = color, (x, y)
       self._scene.addLine(pos[0], pos[1], x, y, color)
 
-    if x < self._x_min or x > self._x_max \
+    if x > self._x_max \
       or y < self._y_min or y > self._y_max:
-      self._x_min = min(self._x_min, x)
       self._x_max = max(self._x_max, x)
       self._y_min = min(self._y_min, y)
       self._y_max = max(self._y_max, y)
       self.fitInView()
 
   def fitInView(self):
-      w = self._x_max - self._x_min
+      x = self._x_max - self._x_size
       h = self._y_max - self._y_min
-      self._view.fitInView(self._x_min, self._y_min, w, h)
+      self._view.fitInView(x, self._y_min, self._x_size, h)
 
 def testAddPoint(controller):
   import math
   f = lambda x, n: 10 * math.sin(x * n)
   for id in range(5):
-    for x in range(100):
+    for x in range(200):
       controller.addPoint(id, x, f(x, id))
 
 if __name__ == "__main__":

@@ -41,15 +41,19 @@ def update_plot(num, data, lines):
 
     if t - old_t < 1:
         return lines
+    data[0, :-1] = data[0, 1:]
+    data[0, -1] = t
     for i, y in enumerate(d[1:]):
         data[i + 1, :-1] = data[i + 1, 1:]
         data[i + 1, -1] = y
 
-    data[0] = np.linspace(0, 100, 100)
+    # data[0] = np.linspace(0, 100, 100)
     for i, l in enumerate(lines):
         l.set_data(data[0], data[i + 1])
 
     update_plot.old_time = t
+    plt.xlim(update_plot.old_time, npoints + update_plot.old_time)
+    print update_plot.old_time, 'coucou'
     return lines
 
 sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -79,7 +83,7 @@ def update_lines(num, data, lines):
 npoints = 100
 period = 20
 update_lines.counter = 0
-nbr_data = 7
+nbr_data = 10
 
 thread = threading.Thread(target=read_data, args=(file_sock, queue, nbr_data))
 thread.start()
@@ -95,8 +99,8 @@ col_strokes = [c + s for s in strokes for c in colors]
 lines = plt.plot(*sum([[[], [], cs] for cs in col_strokes[:nbr_data - 1]], []))
 # lines = plt.plot()
 plt.legend(tuple(['data ' + str(i) for i in xrange(1, nbr_data)]), loc='upper left')
-plt.xlim(0, npoints)
 plt.ylim(-11, 11)
+plt.xlim(0, npoints)
 plt.xlabel('x')
 plt.title('test')
 

@@ -9,7 +9,11 @@ class PlotController(QWidget):
   def __init__(self, parent=None):
     super(PlotController, self).__init__(parent)
 
-    self._pens = {}
+    self._plots = {}
+    self._y_min = 0
+    self._y_max = 0
+    self._x_min = 0
+    self._x_max = 0
 
     self._scene = QGraphicsScene()
     self._view = QGraphicsView(self._scene)
@@ -21,10 +25,27 @@ class PlotController(QWidget):
     self.setWindowTitle("Plot")
 
   def addPoint(self, id, x, y):
-    if not id in self._pens:
+    if not id in self._plots:
       color = QColor(rand() * 255, rand() * 255, rand() * 255)
-      self._pens[id] = QPen(color)
-    self._scene.addRect(x, y, 1, 1, self._pens[id])
+      pos = x, y
+      self._plots[id] = QPen(color), pos
+    else:
+      color, pos = self._plots[id]
+      self._plots[id] = color, (x, y)
+      self._scene.addLine(pos[0], pos[1], x, y, color)
+
+    if x < self._x_min or x > self._x_max \
+      or y < self._y_min or y > self._y_max:
+      self._x_min = min(self._x_min, x)
+      self._x_max = max(self._x_max, x)
+      self._y_min = min(self._y_min, y)
+      self._y_max = max(self._y_max, y)
+      self.fitInView()
+
+  def fitInView(self):
+      w = self._x_max - self._x_min
+      h = self._y_max - self._y_min
+      self._view.fitInView(self._x_min, self._y_min, w, h)
 
 def testAddPoint(controller):
   import math

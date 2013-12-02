@@ -1,9 +1,35 @@
 #!/usr/bin/env python3
 
 import sys
+import socket
 from random import random as rand
+from threading import Thread
+from queue import Queue
 from PySide import QtCore
 from PySide.QtGui import *
+
+class Read(Thread):
+  def __init__(self, file_in, queue, nbr_data):
+    super(Read, self).__init__()
+    self._file_in = file_in
+    self._queue = queue
+    self._nbr_data = nbr_data
+    self._running = False
+
+  def run(self):
+    self._running = True
+    while self._running:
+      line = self._file_in.readline().decode('ascii').strip().split(' ')
+      if len(line) == self._nbr_data + 2 and line[0] == 'T':
+        try:
+          f = list(map(float, line[1:]))
+        except ValueError:
+          pass
+        else:
+          self._queue.put((f[1], f[1:]))
+
+  def stop(self):
+    self._running = False
 
 class PlotController(QWidget):
   def __init__(self, parent=None):
@@ -14,6 +40,14 @@ class PlotController(QWidget):
     self._y_max = 0
     self._x_size = 100
     self._x_max = 0
+    self._nbr_data = 9
+
+    self._sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    self._sock.connect('./test')
+    self._file = self._sock.makefile('rb', buffering=0)
+    self._queue = Queue()
+    self._thread = Read(self._file, self._queue, self._nbr_data)
+    self._thread.start()
 
     self._scene = QGraphicsScene()
     self._view = QGraphicsView(self._scene)
@@ -26,9 +60,19 @@ class PlotController(QWidget):
 
     self.setWindowTitle("Plot")
 
+  def closeEvent(self, event):
+    self.close()
+    super(PlotController, self).closeEvent(event)
+
   def resizeEvent(self, event):
     self.fitInView()
     super(PlotController, self).resizeEvent(event)
+
+  def close(self):
+    self._thread.stop()
+    self._thread.join()
+    self._sock.close()
+    self._file.close()
 
   def addPoint(self, id, x, y):
     if not id in self._plots:
@@ -56,8 +100,8 @@ class PlotController(QWidget):
 
 def testAddPoint(controller):
   import math
-  f = lambda x, n: 10 * math.sin(x * n)
-  for id in range(5):
+  f = lambda x, n: 10 * math.sin(x / 10.0 * n)
+  for id in range(3):
     for x in range(200):
       controller.addPoint(id, x, f(x, id))
 

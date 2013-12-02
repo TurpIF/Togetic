@@ -36,7 +36,8 @@ class Reader(Thread, QtCore.QObject):
           # print(f)
           self._nbr += 1
 
-          if self._nbr > 42 * 0.1:
+          # if self._nbr > 42 / 42:
+          if True or self._queue.qsize() > 42 and self._nbr > 42:
             self.speak.emit()
             self._nbr = 0
 
@@ -50,7 +51,7 @@ class PlotController(QWidget):
     self._plots = {}
     self._y_min = 0
     self._y_max = 0
-    self._x_size = 100
+    self._x_size = 6
     self._x_max = 0
     self._nbr_data = 9
 
@@ -62,8 +63,9 @@ class PlotController(QWidget):
 
     self._scene = QGraphicsScene()
     self._view = QGraphicsView(self._scene)
-    self._view.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+    self._view.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
     self._view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+    self._view.setViewportUpdateMode(QGraphicsView.NoViewportUpdate)
 
     layout = QVBoxLayout()
     layout.addWidget(self._view)
@@ -90,7 +92,7 @@ class PlotController(QWidget):
     super(PlotController, self).closeEvent(event)
 
   def resizeEvent(self, event):
-    self.fitInView()
+    # self.fitInView()
     super(PlotController, self).resizeEvent(event)
 
   def close(self):

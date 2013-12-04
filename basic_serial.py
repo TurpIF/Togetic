@@ -9,7 +9,7 @@ import matplotlib.animation as animation
 
 def update_lines(num, data, lines):
     update_lines.counter += 1
-    ser.write('a')
+    ser.write('g')
     l = ser.readline()
     print l
     x, y, z = map(float, l.split(' '))

@@ -9,11 +9,14 @@ import matplotlib.animation as animation
 
 def update_lines(num, data, lines):
     update_lines.counter += 1
-    ser.write('g')
+    ser.write('c')
     l = ser.readline()
     print l
-    x, y, z = map(float, l.split(' '))
-    print(x, y, z)
+    try:
+        x, y, z = map(float, l.split(' '))
+        # print(x, y, z)
+    except ValueError:
+        x, y, z = 0, 0, 0
 
     if update_lines.counter < npoints + 3:
         data[0, num] = num

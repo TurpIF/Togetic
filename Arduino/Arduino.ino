@@ -83,6 +83,7 @@ static ADXL345 accel;
 void setupAccel() {
   accel = ADXL345();
   accel.powerOn();
+  accel.setFullResBit(true);
 }
 
 void setupCompass() {

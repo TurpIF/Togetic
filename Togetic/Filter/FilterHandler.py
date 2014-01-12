@@ -11,6 +11,10 @@ class FilterHandler(AbstractServer):
         self.gyro_sens = 6500000.536
         self.accel_sens = 81920000
 
+        self._x = 0
+        self._y = 0
+        self._z = 0
+
         self._pitch = 0
         self._roll = 0
         self._yaw = 0
@@ -29,20 +33,20 @@ class FilterHandler(AbstractServer):
                     in_data[4:7])
             mag_x, mag_y, mag_z = in_data[7:10]
 
-            self._pitch += gyr_x * dt
-            self._roll += gyr_y * dt
-            self._yaw = 0
+            # self._pitch += gyr_x * dt
+            # self._roll += gyr_y * dt
+            # self._yaw = 0
 
-            force = abs(acc_x) + abs(acc_y) + abs(acc_z)
-            if True or 8192 < force < 32768:
-                pitch_acc = math.atan2(acc_y, acc_z) * 180 / math.pi
-                self._pitch = self._pitch * 0.98 + pitch_acc * 0.02;
+            # force = abs(acc_x) + abs(acc_y) + abs(acc_z)
+            # if True or 8192 < force < 32768:
+            #     pitch_acc = math.atan2(acc_y, acc_z) * 180 / math.pi
+            #     self._pitch = self._pitch * 0.98 + pitch_acc * 0.02;
 
-            self._pitch %= math.pi
-            self._roll %= math.pi
-            self._yaw %= math.pi
+            # self._pitch %= math.pi
+            # self._roll %= math.pi
+            # self._yaw %= math.pi
 
-            print((self._pitch, self._roll))
+            # print((self._pitch, self._roll))
 
             x = 0
             y = 0
@@ -52,6 +56,7 @@ class FilterHandler(AbstractServer):
             psy = self._yaw
             out_data = time, x, y, z, theta, phi, psy
             self._out_shm.data = out_data
+            self._time = time
 
     def _free(self):
         pass

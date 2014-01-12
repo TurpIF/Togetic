@@ -2,9 +2,10 @@ import time
 from Togetic.Server.AbstractServer import AbstractServer
 
 class SerialHandler(AbstractServer):
-    def __init__(self, request, shm_serial, shm):
+    def __init__(self, request, transformation, shm_serial, shm):
         AbstractServer.__init__(self)
         self._request = request
+        self._transformation = transformation
         self._shm_serial = shm_serial
         self._shm = shm
 
@@ -22,11 +23,11 @@ class SerialHandler(AbstractServer):
         except UnicodeDecodeError:
             pass
         else:
-            print(self, mes)
             if len(mes) == 3:
                 try:
-                    x, y, z = map(float, mes)
+                    x, y, z = self._transformation(list(map(float, mes)))
                 except ValueError:
                     pass
                 else:
+                    print(self, (x, y, z))
                     self._shm.data = (x, y, z)

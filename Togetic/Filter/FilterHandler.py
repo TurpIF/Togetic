@@ -48,13 +48,14 @@ class FilterHandler(AbstractServer):
 
             # print((self._pitch, self._roll))
 
-            x = 0
-            y = 0
-            z = 0
+            x = time
+            y = 1
+            z = 6
             theta = self._pitch
             phi = self._roll
             psy = self._yaw
             out_data = time, x, y, z, theta, phi, psy
+            print(out_data)
             self._out_shm.data = out_data
             self._time = time
 

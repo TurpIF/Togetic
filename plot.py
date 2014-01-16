@@ -83,6 +83,7 @@ nbr_data = 10
 
 thread = threading.Thread(target=read_data, args=(file_sock, queue, nbr_data))
 thread.start()
+print("Creation de la figure")
 
 fig1 = plt.figure()
 plt.hold(True)
@@ -100,9 +101,11 @@ plt.ylim(-11, 11)
 plt.xlabel('x')
 plt.title('test')
 
+print("Avant annimation")
 line_ani = animation.FuncAnimation(fig1, update_plot, npoints,
         fargs=(data, lines), interval=period, blit=True)
 
+print("Affichage de la fenetre")
 plt.show()
 
 # vim: set ts=4 sw=4:

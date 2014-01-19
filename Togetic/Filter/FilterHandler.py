@@ -9,7 +9,7 @@ class FilterHandler(AbstractServer):
         self._time = None
 
         self.gyro_sens = 6500000.536
-        self.accel_sens = 81920000
+        self.accel_sens = 1
 
         self._x = 0
         self._y = 0
@@ -33,9 +33,9 @@ class FilterHandler(AbstractServer):
                     in_data[4:7])
             mag_x, mag_y, mag_z = in_data[7:10]
 
-            # self._pitch += gyr_x * dt
-            # self._roll += gyr_y * dt
-            # self._yaw = 0
+            self._pitch += gyr_x * dt
+            self._roll += gyr_y * dt
+            self._yaw += gyr_z * dt
 
             # force = abs(acc_x) + abs(acc_y) + abs(acc_z)
             # if True or 8192 < force < 32768:
@@ -48,14 +48,14 @@ class FilterHandler(AbstractServer):
 
             # print((self._pitch, self._roll))
 
-            x = time
-            y = 1
-            z = 6
+            x = acc_x
+            y = acc_y
+            z = acc_z
             theta = self._pitch
             phi = self._roll
             psy = self._yaw
             out_data = time, x, y, z, theta, phi, psy
-            print(out_data)
+            print(x*x+y*y+z*z)
             self._out_shm.data = out_data
             self._time = time
 

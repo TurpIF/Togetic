@@ -14,9 +14,9 @@ class ThreadedSensor(AbstractServer):
         AbstractServer.__init__(self)
 
         tr_accel = lambda bits: (
-                0.0039 * bits[0] + 25 * 0.004,
-                0.0039 * bits[1] + 25 * 0.004,
-                0.0039 * bits[2] + 25 * 0.012)
+                bits[0],
+                bits[1],
+                bits[2])
         tr_gyro = lambda bits: (
                 1.0 * bits[0] + 0.0,
                 1.0 * bits[1] + 0.0,

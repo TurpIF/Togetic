@@ -18,7 +18,6 @@ class Receiver(ClientHandler):
                 except ValueError:
                     return
                 else:
-                    # print(data_line)
                     self._shm.data = info
     def _run(self):
         pass

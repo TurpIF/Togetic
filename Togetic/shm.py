@@ -17,13 +17,14 @@ class shm:
     def get(self, lock=True):
         if lock:
             with self._lock:
-                return self._data
+                data = self._data
+                return data
         else:
             return self._data
-    
+
     def acquire(self):
         self._lock.acquire()
-        
+
     def release(self):
         self._lock.release()
 

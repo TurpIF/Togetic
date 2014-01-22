@@ -34,7 +34,7 @@ def read_data(file_in, queue, nbr_data):
                 pass
             else:
                 queue.put(f)
-        time.sleep(0.01)
+        #time.sleep(0.01)
 
 def get_random_data():
     return [random.random()-0.5 for i in xrange(nb_var)]
@@ -52,13 +52,13 @@ thread.start()
 ##############################   matplotlib stuff
 # graphic creation
 print("INIT: matplotlib axes")
-fig, (ax1, ax2) = plt.subplots(2, sharex=True)  #xlim=(0, 100), ylim=(-1, 1))
+fig, (ax1, ax2) = plt.subplots(2, sharex=True)
 
 # axes limits
 ax1.set_xlim((0, 100))
-ax1.set_ylim((-10, 10))
+ax1.set_ylim((-1000, 1000))
 ax2.set_xlim((0, 100))
-ax2.set_ylim((-10, 10))
+ax2.set_ylim((-1000, 1000))
 
 print("INIT: plots creation")
 # init plots (create one line object for each data)
@@ -88,7 +88,7 @@ def animate(i):
         data = queue.get()
     print('DRAWING: queue content : {}'.format(data))
 
-    time_text.set_text('time = {}'.format(i % 1000)) # :( doesn't work
+    time_text.set_text('time = {}'.format(i % 1000))
 
     if data is not None:
         for l, d in zip(lines, data[1:]):
@@ -98,8 +98,7 @@ def animate(i):
                 tmp = tmp[1:]  # queue style (first we contruct the queue)
             l.set_data(t[:len(tmp)], tmp)  # update the plot data
 
-        # suz hack lolz (we need a single list of objects)
-
+    # suz hack lolz (we need a single list of objects)
     return lines + [time_text]
 
 

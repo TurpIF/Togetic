@@ -9,14 +9,18 @@ import matplotlib.animation as animation
 
 def update_lines(num, data, lines):
     update_lines.counter += 1
-    ser.write('r')
+    ser.write('a')
     l = ser.readline()
     # d = json.loads(l)
     # x = d['raw']['x']
     # y = d['raw']['y']
     # z = d['raw']['z']
-    x, y, z = map(float, l.split(' '))
-    print(x, y, z)
+    x, y, z = 0, 0, 0
+    try:
+        x, y, z = map(float, l.split(' '))
+        print(x, y, z)
+    except ValueError:
+        pass
 
     if update_lines.counter < npoints + 3:
         data[0, num] = num

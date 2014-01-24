@@ -15,7 +15,7 @@ import random
 
 
 ##############################   constants
-nb_points = 100
+nb_points = 1000
 t = [i for i in xrange(nb_points)]
 l_names_subplot_1 = ['accel_x', 'accel_y', 'accel_z']
 l_names_subplot_2 = ['rot_x', 'rot_y', 'rot_z']
@@ -26,6 +26,7 @@ queue = Queue()
 #############################    data management
 def read_data(file_in, queue, nbr_data):
     while True:
+        print('lecture', queue.qsize())
         line = file_in.readline().strip().split(' ')
         if len(line) == nbr_data + 1 and line[0] == 'T':
             try:
@@ -55,10 +56,10 @@ print("INIT: matplotlib axes")
 fig, (ax1, ax2) = plt.subplots(2, sharex=True)
 
 # axes limits
-ax1.set_xlim((0, 100))
-ax1.set_ylim((-1000, 1000))
-ax2.set_xlim((0, 100))
-ax2.set_ylim((-1000, 1000))
+ax1.set_xlim((0, 1000))
+ax1.set_ylim((-1100, 1100))
+ax2.set_xlim((0, 1000))
+ax2.set_ylim((-2100, 2100))
 
 print("INIT: plots creation")
 # init plots (create one line object for each data)
@@ -84,19 +85,20 @@ time_text = ax1.text(0.5, 0.9, '', ha='center', va='center',
 
 def animate(i):
     data = None
-    if not queue.empty():
+    while not queue.empty():
         data = queue.get()
-    print('DRAWING: queue content : {}'.format(data))
+    # print('DRAWING: queue content : {}'.format(data))
 
-    time_text.set_text('time = {}'.format(i % 1000))
+        time_text.set_text('time = {}'.format(i % 1000))
 
-    if data is not None:
-        for l, d in zip(lines, data[1:]):
-            tmp = l.get_ydata()  # get the previous values
-            tmp.append(d)  # add the new data
-            if len(tmp) >= len(t):
-                tmp = tmp[1:]  # queue style (first we contruct the queue)
-            l.set_data(t[:len(tmp)], tmp)  # update the plot data
+        if data is not None:
+            print('affichage')
+            for l, d in zip(lines, data[1:]):
+                tmp = l.get_ydata()  # get the previous values
+                tmp.append(d)  # add the new data
+                if len(tmp) >= len(t):
+                    tmp = tmp[1:]  # queue style (first we contruct the queue)
+                l.set_data(t[:len(tmp)], tmp)  # update the plot data
 
     # suz hack lolz (we need a single list of objects)
     return lines + [time_text]

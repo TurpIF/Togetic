@@ -8,7 +8,7 @@ class FilterHandler(AbstractServer):
         self._out_shm = output_shm
         self._time = None
 
-        self.gyro_sens = 6500000.536
+        self.gyro_sens = 1#6500000.536
         self.accel_sens = 1
 
         self._x = 0
@@ -54,6 +54,9 @@ class FilterHandler(AbstractServer):
             theta = self._pitch
             phi = self._roll
             psy = self._yaw
+            theta = gyr_x
+            phi = gyr_y
+            psy = gyr_z
             out_data = time, x, y, z, theta, phi, psy
             print(x*x+y*y+z*z)
             self._out_shm.data = out_data

@@ -17,7 +17,7 @@ class SerialHandler(AbstractServer):
         pass
 
     def _serve(self):
-        time.sleep(0.01)
+        time.sleep(0.1)
         self._shm_serial.acquire()
         self._shm_serial.get(False).write(bytearray(self._request, 'ascii'))
         l = self._shm_serial.get(False).readline()

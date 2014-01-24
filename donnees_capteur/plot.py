@@ -1,6 +1,6 @@
 from pylab import *
 
-l_name = ['./thread_2.dat', './thread_3.dat', './thread_4.dat']
+l_name = ['./thread_A.dat', './thread_G.dat', './thread_C.dat']
 
 def _plot(f_name) :
     l_x = []
@@ -9,9 +9,14 @@ def _plot(f_name) :
     print 'lol', f_name
     with open(f_name, "r") as f:
         for i in f:
-            data = i.strip()[1:-1]
-            data = data.split(",")
-            x, y, z = data
+            x, y, z = 0, 0, 0
+            try:
+                data = i.strip()[1:-1]
+                data = data.split(",")
+                x, y, z = data
+            except ValueError:
+                print data
+                continue
             l_x.append(x)
             l_y.append(y)
             l_z.append(z)

@@ -9,7 +9,7 @@ import matplotlib.animation as animation
 
 def update_lines(num, data, lines):
     update_lines.counter += 1
-    ser.write('a')
+    ser.write('r')
     l = ser.readline()
     # d = json.loads(l)
     # x = d['raw']['x']

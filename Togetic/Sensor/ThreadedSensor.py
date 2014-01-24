@@ -30,15 +30,18 @@ class ThreadedSensor(AbstractServer):
         shm_gyro = shm()
         shm_compass = shm()
         shm_serial = shm(serial.Serial(addr_input, 115200, timeout=0.01))
-        self._accel_handler = SerialHandler('a', tr_accel, shm_serial, shm_accel)
-        self._gyro_handler = SerialHandler('g', tr_gyro, shm_serial, shm_gyro)
-        self._compass_handler = SerialHandler('c', tr_compass, shm_serial, shm_compass)
+        self._accel_handler = SerialHandler('A', 'a', tr_accel, shm_serial, shm_accel)
+        self._gyro_handler = SerialHandler('G', 'g', tr_gyro, shm_serial, shm_gyro)
+        self._compass_handler = SerialHandler('C', 'c', tr_compass, shm_serial, shm_compass)
         self._emitter = Listener(addr_output,
             Emitter(shm_accel, shm_gyro, shm_compass))
 
     def start(self):
-        for s in [self._accel_handler, self._gyro_handler,
-                self._compass_handler, self._emitter]:
+        for s in [
+                # self._accel_handler,
+                self._gyro_handler,
+                # self._compass_handler,
+                self._emitter]:
             s.start()
         AbstractServer.start(self)
 

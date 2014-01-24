@@ -2,12 +2,16 @@ import time
 from Togetic.Server.AbstractServer import AbstractServer
 
 class SerialHandler(AbstractServer):
-    def __init__(self, request, transformation, shm_serial, shm):
+    def __init__(self, name, request, transformation, shm_serial, shm):
         AbstractServer.__init__(self)
         self._request = request
         self._transformation = transformation
         self._shm_serial = shm_serial
         self._shm = shm
+        self._name = name
+
+    def __str__(self):
+        return self._name
 
     def _free(self):
         pass
@@ -27,7 +31,7 @@ class SerialHandler(AbstractServer):
                 try:
                     x, y, z = self._transformation(list(map(float, mes)))
                 except ValueError:
-                    pass
+                    print(mes, ' -> GTFO!!!')
                 else:
                     print(self, (x, y, z))
                     self._shm.data = (x, y, z)

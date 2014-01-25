@@ -25,7 +25,7 @@ class FilterHandler(AbstractServer):
         self._gyr = []
         self._gyr_avg = None
         self._gyr_sq_avg = None
-        self._gyr_size = 50
+        self._gyr_size = 10
         self._gyr_dist = 3
 
     def _serve(self):
@@ -62,9 +62,9 @@ class FilterHandler(AbstractServer):
                     zip(self._gyr[0], gyr, self._gyr_sq_avg)])
                 self._gyr = self._gyr[1:] + [gyr]
 
-                if False in [(v - avg)**2 <= self._gyr_dist * s
-                        for v, avg, s in zip(gyr, self._gyr_avg, std_sq)]:
-                    gyr = gyr_x, gyr_y, gyr_z = self._gyr_avg
+                # if False in [(v - avg)**2 <= self._gyr_dist * s
+                #         for v, avg, s in zip(gyr, self._gyr_avg, std_sq)]:
+                #     gyr = gyr_x, gyr_y, gyr_z = self._gyr_avg
 
             print('A', gyr_x, gyr_y, gyr_z)
             self.fX = acc_x * alpha + (self.fX * (1 - alpha))

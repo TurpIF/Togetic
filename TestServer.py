@@ -6,6 +6,8 @@ import argparse
 from Togetic.Server import Handler
 from Togetic.Server import Listener
 
+value = 0
+
 def PositionServer(path):
     class _PositionServer(Handler):
         def __init__(self, client):
@@ -30,7 +32,11 @@ def PositionServer(path):
 
 def dummyPath(t):
     import math
-    return (time.time(), 0 * -10 * math.cos(t), 0 * -10 * math.sin(t), 0, 0 * math.sin(t), (int(time.time()) % 10) / 10 * 2 * math.pi, 0 * (math.cos(t) + math.sin(t)) / 2.0)
+    # Avant blender
+    # return (time.time(), 0 * -10 * math.cos(t), 0 * -10 * math.sin(t), 0, 0 * math.sin(t), (int(time.time()) % 10) / 10 * 2 * math.pi, 0 * (math.cos(t) + math.sin(t)) / 2.0)
+
+    # Avant le filtre
+    return (time.time(), 0, 0, 0, 0, value * 2 - 1, 0, 0, 0, 0)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -43,6 +49,8 @@ if __name__ == '__main__':
     try:
         listener.start()
         while True:
+            input()
+            value = 1 - value
             pass
     except KeyboardInterrupt:
         listener.stop()

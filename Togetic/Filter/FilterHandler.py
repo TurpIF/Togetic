@@ -1,4 +1,5 @@
 import math
+import time
 from Togetic.Server.AbstractServer import AbstractServer
 
 class FilterHandler(AbstractServer):
@@ -25,13 +26,14 @@ class FilterHandler(AbstractServer):
         alpha = 0.5
 
         in_data = self._in_shm.data
-        print(in_data)
+        self._in_shm.data = None
         if in_data is not None and len(in_data) == 10:
+            print(in_data)
             if self._time is None:
                 self._time = in_data[0]
                 return
-            time = in_data[0]
-            dt = time - self._time
+            t = in_data[0]
+            dt = t - self._time
             acc_x, acc_y, acc_z = map(lambda x: x / self.accel_sens,
                     in_data[1:4])
             gyr_x, gyr_y, gyr_z = map(lambda x: x / self.gyro_sens,
@@ -60,6 +62,7 @@ class FilterHandler(AbstractServer):
             x = acc_x
             y = acc_y
             z = acc_z
+            print(x*x+y*y+z*z)
             theta = self._pitch
             phi = self._roll
             psy = self._yaw
@@ -67,10 +70,10 @@ class FilterHandler(AbstractServer):
             # phi = gyr_y
             # psy = gyr_z
             x, y, z = 0, 0, 0
-            out_data = time, x, y, z, theta, phi, psy
-            print(x*x+y*y+z*z)
+            out_data = t, x, y, z, theta, phi, psy
             self._out_shm.data = out_data
-            self._time = time
+            self._time = t
+        time.sleep(0.25)
 
     def _free(self):
         pass

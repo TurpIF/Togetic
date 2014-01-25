@@ -17,7 +17,7 @@ class SerialHandler(AbstractServer):
         pass
 
     def _serve(self):
-        time.sleep(0.25)
+        time.sleep(0.01)
         self._shm_serial.acquire()
         self._shm_serial.get(False).write(bytearray(self._request, 'ascii'))
         l = self._shm_serial.get(False).readline()
@@ -27,11 +27,15 @@ class SerialHandler(AbstractServer):
         except UnicodeDecodeError:
             pass
         else:
-            if len(mes) == 3:
+            if len(mes) == 9:
                 try:
-                    x, y, z = self._transformation(list(map(float, mes)))
+                    ax, ay, az, gx, gy, gz, cx, cy, cz = \
+                            self._transformation(list(map(float, mes)))
                 except ValueError:
                     print(mes, ' -> GTFO!!!')
                 else:
-                    print(self, (x, y, z))
-                    self._shm.data = (x, y, z)
+                    # print(self, (ax, ay, az), (gx, gy, gz), (cx, cy, cz))
+                    print('A', (ax, ay, az))
+                    print('G', (gx, gy, gz))
+                    print('C', (cx, cy, cz))
+                    self._shm.data = (ax, ay, az, gx, gy, gz, cx, cy, cz)

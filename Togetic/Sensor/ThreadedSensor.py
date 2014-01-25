@@ -13,34 +13,47 @@ class ThreadedSensor(AbstractServer):
     def __init__(self, addr_input, addr_output):
         AbstractServer.__init__(self)
 
-        tr_accel = lambda bits: (
+        transformation = lambda bits: (
                 bits[0],
                 bits[1],
-                bits[2])
-        tr_gyro = lambda bits: (
-                1.0 * bits[0] + 0.0,
-                1.0 * bits[1] + 0.0,
-                1.0 * bits[2] + 0.0)
-        tr_compass = lambda bits: (
-                1.0 * bits[0] + 0.0,
-                1.0 * bits[1] + 0.0,
-                1.0 * bits[2] + 0.0)
+                bits[2],
+                bits[3],
+                bits[4],
+                bits[5],
+                bits[6],
+                bits[7],
+                bits[8])
+        # tr_accel = lambda bits: (
+        #         1.0 * bits[0] + 0.0,
+        #         1.0 * bits[1] + 0.0,
+        #         1.0 * bits[2] + 0.0)
+        # tr_gyro = lambda bits: (
+        #         1.0 * bits[0] + 0.0,
+        #         1.0 * bits[1] + 0.0,
+        #         1.0 * bits[2] + 0.0)
+        # tr_compass = lambda bits: (
+        #         1.0 * bits[0] + 0.0,
+        #         1.0 * bits[1] + 0.0,
+        #         1.0 * bits[2] + 0.0)
 
-        shm_accel = shm()
-        shm_gyro = shm()
-        shm_compass = shm()
+        shm_data = shm()
+        # shm_accel = shm()
+        # shm_gyro = shm()
+        # shm_compass = shm()
         shm_serial = shm(serial.Serial(addr_input, 115200, timeout=0.01))
-        self._accel_handler = SerialHandler('A', 'a', tr_accel, shm_serial, shm_accel)
-        self._gyro_handler = SerialHandler('G', 'g', tr_gyro, shm_serial, shm_gyro)
-        self._compass_handler = SerialHandler('C', 'c', tr_compass, shm_serial, shm_compass)
+        self._handler = SerialHandler('R', 'r', transformation, shm_serial, shm_data)
+        # self._accel_handler = SerialHandler('A', 'a', tr_accel, shm_serial, shm_accel)
+        # self._gyro_handler = SerialHandler('G', 'g', tr_gyro, shm_serial, shm_gyro)
+        # self._compass_handler = SerialHandler('C', 'c', tr_compass, shm_serial, shm_compass)
         self._emitter = Listener(addr_output,
-            Emitter(shm_accel, shm_gyro, shm_compass))
+            Emitter(shm_data)) #shm_accel, shm_gyro, shm_compass))
 
     def start(self):
         for s in [
-                self._accel_handler,
-                self._gyro_handler,
-                self._compass_handler,
+                # self._accel_handler,
+                # self._gyro_handler,
+                # self._compass_handler,
+                self._handler,
                 self._emitter]:
             s.start()
         AbstractServer.start(self)
@@ -50,9 +63,10 @@ class ThreadedSensor(AbstractServer):
 
     def _free(self):
         for s in [
-                self._accel_handler,
-                self._gyro_handler,
-                self._compass_handler,
+                # self._accel_handler,
+                # self._gyro_handler,
+                # self._compass_handler,
+                self._handler,
                 self._emitter]:
             print('Stopping ', s)
             s.stop()

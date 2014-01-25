@@ -114,21 +114,32 @@ void readingCompass(int * x, int * y, int * z) {
 
 void loop() {
   char c = '\0';
-  while(c != 'a' && c != 'g' && c != 'c') {
+  while(c != 'r') {
       c = Serial.read();
   }
-  int x = 0, y = 0, z = 0;
-  if(c == 'a')
-      readingAccel(&x, &y, &z);
-  else if(c == 'g')
-      readingGyro(&x, &y, &z);
-  else
-      readingCompass(&x, &y, &z);
-  Serial.print(x);
+  int ax = 0, ay = 0, az = 0;
+  int gx = 0, gy = 0, gz = 0;
+  int cx = 0, cy = 0, cz = 0;
+  readingAccel(&ax, &ay, &az);
+  readingGyro(&gx, &gy, &gz);
+  readingCompass(&cx, &cy, &cz);
+  Serial.print(ax);
   Serial.print(" ");
-  Serial.print(y);
+  Serial.print(ay);
   Serial.print(" ");
-  Serial.println(z);
+  Serial.print(az);
+  Serial.print(" ");
+  Serial.print(gx);
+  Serial.print(" ");
+  Serial.print(gy);
+  Serial.print(" ");
+  Serial.print(gz);
+  Serial.print(" ");
+  Serial.print(cx);
+  Serial.print(" ");
+  Serial.print(cy);
+  Serial.print(" ");
+  Serial.println(cz);
 }
 
 // vim: set syntax=cpp sw=2 ts=2 et:

@@ -1,4 +1,5 @@
 import mathutils
+import time
 
 from Togetic.shm import shm
 from Togetic.Blender.Receiver import Receiver
@@ -27,4 +28,4 @@ class PositionController:
             ori.y = phy
             ori.z = psy
             self._owner.orientation = ori
-            print(t, x, y, z, ori.x, ori.y, ori.z)
+            print(time.time() - t, t, x, y, z, ori.x, ori.y, ori.z)

@@ -6,7 +6,6 @@ def Emitter(shm):
         def _msgToSend(self):
             data = shm.data
             if data is not None:
-                print(time.time() - data[0])
                 data_str = 'T ' + ' '.join(map(str, data))
                 return data_str + '\n'
 

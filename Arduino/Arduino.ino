@@ -81,9 +81,10 @@ static HMC5883L compass;
 static ADXL345 accel;
 
 void setupAccel() {
-  accel = ADXL345();
-  accel.powerOn();
-  accel.setFullResBit(true);
+  //accel = ADXL345();
+  //accel.powerOn();
+  accel.begin();
+  //accel.setFullResBit(true);
 }
 
 void setupCompass() {
@@ -101,7 +102,7 @@ void setup() {
 }
 
 void readingAccel(int * x, int * y, int * z) {
-  accel.readAccel(x, y, z);
+  accel.read(x, y, z);
 }
 
 void readingCompass(int * x, int * y, int * z) {

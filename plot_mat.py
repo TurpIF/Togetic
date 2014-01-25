@@ -26,16 +26,17 @@ queue = Queue()
 #############################    data management
 def read_data(file_in, queue, nbr_data):
     while True:
-        print('lecture', queue.qsize())
+        # print('lecture', queue.qsize())
         line = file_in.readline().strip().split(' ')
         if len(line) == nbr_data + 1 and line[0] == 'T':
             try:
                 f = list(map(float, line[1:]))
+                print time.time() - f[0]
             except ValueError:
                 pass
             else:
                 queue.put(f)
-        #time.sleep(0.01)
+        time.sleep(0.001)
 
 def get_random_data():
     return [random.random()-0.5 for i in xrange(nb_var)]
@@ -92,7 +93,7 @@ def animate(i):
         time_text.set_text('time = {}'.format(i % 1000))
 
         if data is not None:
-            print('affichage')
+            # print('affichage', queue.qsize())
             for l, d in zip(lines, data[1:]):
                 tmp = l.get_ydata()  # get the previous values
                 tmp.append(d)  # add the new data
@@ -101,6 +102,7 @@ def animate(i):
                 l.set_data(t[:len(tmp)], tmp)  # update the plot data
 
     # suz hack lolz (we need a single list of objects)
+    # print i
     return lines + [time_text]
 
 

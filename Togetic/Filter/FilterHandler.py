@@ -58,7 +58,7 @@ class FilterHandler(AbstractServer):
             phi = gyr_y
             psy = gyr_z
             out_data = time, x, y, z, theta, phi, psy
-            print(x*x+y*y+z*z)
+            # print(x*x+y*y+z*z)
             self._out_shm.data = out_data
             self._time = time
 

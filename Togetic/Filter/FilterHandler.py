@@ -66,6 +66,7 @@ class FilterHandler(AbstractServer):
             # theta = gyr_x
             # phi = gyr_y
             # psy = gyr_z
+            x, y, z = 0, 0, 0
             out_data = time, x, y, z, theta, phi, psy
             print(x*x+y*y+z*z)
             self._out_shm.data = out_data

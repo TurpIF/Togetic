@@ -37,3 +37,6 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# Fichier de données en masse
+*.dat

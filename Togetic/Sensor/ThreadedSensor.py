@@ -39,8 +39,8 @@ class ThreadedSensor(AbstractServer):
     def start(self):
         for s in [
                 self._accel_handler,
-                # self._gyro_handler,
-                # self._compass_handler,
+                self._gyro_handler,
+                self._compass_handler,
                 self._emitter]:
             s.start()
         AbstractServer.start(self)
@@ -51,8 +51,8 @@ class ThreadedSensor(AbstractServer):
     def _free(self):
         for s in [
                 self._accel_handler,
-                # self._gyro_handler,
-                # self._compass_handler, 
+                self._gyro_handler,
+                self._compass_handler,
                 self._emitter]:
             print('Stopping ', s)
             s.stop()

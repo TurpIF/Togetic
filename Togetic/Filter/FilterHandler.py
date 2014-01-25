@@ -44,8 +44,8 @@ class FilterHandler(AbstractServer):
             self.fY = acc_y * alpha + (self.fY * (1 - alpha))
             self.fZ = acc_z * alpha + (self.fZ * (1 - alpha))
 
-            self._pitch = math.atan2(self.fX, math.sqrt(self.fY**2 + self.fZ**2)) * 180 / math.pi
-            self._roll = math.atan2(-self.fY, self.fZ) * 180 / math.pi
+            self._pitch = math.atan2(self.fX, math.sqrt(self.fY**2 + self.fZ**2))
+            self._roll = math.atan2(-self.fY, self.fZ)
             self._yaw = 0
 
             # force = abs(acc_x) + abs(acc_y) + abs(acc_z)
@@ -73,7 +73,7 @@ class FilterHandler(AbstractServer):
             out_data = t, x, y, z, theta, phi, psy
             self._out_shm.data = out_data
             self._time = t
-        time.sleep(0.25)
+        time.sleep(0.01)
 
     def _free(self):
         pass

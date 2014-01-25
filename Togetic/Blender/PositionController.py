@@ -18,6 +18,7 @@ class PositionController:
             self._receiver.join(2)
 
     def run(self):
+        # time.sleep(0.01)
         data = self._shm.data
         if data is not None and len(data) == 7:
             t, x, y, z, theta, phy, psy = data

@@ -26,7 +26,7 @@ queue = Queue()
 #############################    data management
 def read_data(file_in, queue, nbr_data):
     while True:
-        print('lecture', queue.qsize())
+        #print('lecture', queue.qsize())
         line = file_in.readline().strip().split(' ')
         if len(line) == nbr_data + 1 and line[0] == 'T':
             try:
@@ -92,7 +92,7 @@ def animate(i):
         time_text.set_text('time = {}'.format(i % 1000))
 
         if data is not None:
-            print('affichage')
+            print "\t".join(map(str, data))
             for l, d in zip(lines, data[1:]):
                 tmp = l.get_ydata()  # get the previous values
                 tmp.append(d)  # add the new data

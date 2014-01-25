@@ -13,13 +13,16 @@ def _plot(f_name) :
             try:
                 data = i.strip()[1:-1]
                 data = data.split(",")
-                x, y, z = data
+                x, y, z = map(float, data)
             except ValueError:
                 print data
                 continue
             l_x.append(x)
             l_y.append(y)
             l_z.append(z)
+    print '    x avg :', sum(l_x) * 1.0 / len(l_x)
+    print '    y avg :', sum(l_y) * 1.0 / len(l_y)
+    print '    z avg :', sum(l_z) * 1.0 / len(l_z)
     for l, d in zip([l_x, l_y, l_z], ["x", "y", "z"]) :
         plot(l)
         name = f_name.split('./')[1].split(".")[0] + "_" + d + ".png"

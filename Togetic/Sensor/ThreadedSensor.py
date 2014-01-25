@@ -1,4 +1,5 @@
 import time
+import math
 import serial
 
 from Togetic.shm import shm
@@ -13,28 +14,29 @@ class ThreadedSensor(AbstractServer):
     def __init__(self, addr_input, addr_output):
         AbstractServer.__init__(self)
 
+        # Offset en bits
+        gyr_offset_x = 4.18973187447
+        gyr_offset_y = -7.3076830588
+        gyr_offset_z = 14.5367319947
+        gyr_scale = math.pi / 180.0 * 17.50 / 1000 # bits -> deg -> rad
+
+        tr_accel = lambda bits: (
+                1.0 * bits[0] + 0.0,
+                1.0 * bits[1] + 0.0,
+                1.0 * bits[2] + 0.0)
+        tr_gyro = lambda bits: (
+                (bits[0] - gyr_offset_x) * gyr_scale,
+                (bits[1] - gyr_offset_y) * gyr_scale,
+                (bits[2] - gyr_offset_z) * gyr_scale)
+        tr_compass = lambda bits: (
+                1.0 * bits[0] + 0.0,
+                1.0 * bits[1] + 0.0,
+                1.0 * bits[2] + 0.0)
+
         transformation = lambda bits: (
-                bits[0],
-                bits[1],
-                bits[2],
-                bits[3],
-                bits[4],
-                bits[5],
-                bits[6],
-                bits[7],
-                bits[8])
-        # tr_accel = lambda bits: (
-        #         1.0 * bits[0] + 0.0,
-        #         1.0 * bits[1] + 0.0,
-        #         1.0 * bits[2] + 0.0)
-        # tr_gyro = lambda bits: (
-        #         1.0 * bits[0] + 0.0,
-        #         1.0 * bits[1] + 0.0,
-        #         1.0 * bits[2] + 0.0)
-        # tr_compass = lambda bits: (
-        #         1.0 * bits[0] + 0.0,
-        #         1.0 * bits[1] + 0.0,
-        #         1.0 * bits[2] + 0.0)
+            tr_accel(bits[0:3]) +
+            tr_gyro(bits[3:6]) +
+            tr_compass(bits[6:9]))
 
         shm_data = shm()
         # shm_accel = shm()

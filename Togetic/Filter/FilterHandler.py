@@ -2,12 +2,17 @@ import math
 import time
 from Togetic.Server.AbstractServer import AbstractServer
 
-def noise_filter(distance):
-    def _noise_filter(value, avg, sq_std):
+def noise_f(distance):
+    def _noise_f(value, avg, sq_std):
         if (value - avg) ** 2 > distance * sq_std:
             return avg
         return value
-    return _noise_filter
+    return _noise_f
+
+def lowpass(alpha):
+    def _lowpass_f(value, avg, sq_std):
+        return value
+    return _lowpass_f
 
 class Histo(object):
     def __init__(self, size)
@@ -24,7 +29,7 @@ class Histo(object):
         return self.sum * 1.0 / len(self.hist)
 
     @property
-    def sq_std(self):
+    def std(self):
         if len(self.hist) == 0:
             return 0
         return (self.sq_sum - self.sum) * 1.0 / len(self.hist)
@@ -56,7 +61,6 @@ class FilterHandler(AbstractServer):
         self.ang = tuple([Histo(1) for _ in range(3)])
 
         self.acc = tuple([Histo(1) for _ in range(3)])
-        self.fX, self.fY, self.fZ = 0, 0, 0
 
         self.gyr = tuple([Histo(10) for _ in range(3)])
 
@@ -78,11 +82,14 @@ class FilterHandler(AbstractServer):
 
             for h, v in zip(self.gyr, g):
                 h.add_value(v)
-            g = [noise_filter(3)(h.value, h.avg, h.sq_std) for h in self.gyr]
+            g = [h.value for h in self.gyr]
+            g = [noise_f(3)(v, h.avg, h.std) for v, h in zip(g, self.gyr)]
 
-            self.fX = a[0] * alpha + (self.fX * (1 - alpha))
-            self.fY = a[1] * alpha + (self.fY * (1 - alpha))
-            self.fZ = a[2] * alpha + (self.fZ * (1 - alpha))
+            for h, v in zip(self.acc, a):
+                h.add_value(v)
+            a = [h.value for h in self.gyr]
+            a = [noise_f(3)(v, h.avg, h.std) for v, h in zip(a, self.acc)]
+            a = [lowpass_f(0.5)(v, h.avg, h.std) for v, h in zip(a, self.acc)]
 
             # self._p = math.atan2(self.fX, math.sqrt(self.fY**2 + self.fZ**2))
             # self._r = math.atan2(-self.fY, self.fZ)
@@ -91,11 +98,13 @@ class FilterHandler(AbstractServer):
             for h, v in zip(self.ang, g):
                 val = h.value + dt * v
                 h.add_value(val)
-            ang = [noise_filter(3)(h.value, h.avg, h.sq_std) for h in self.ang]
+            ang = [h.value for h in self.ang]
+            ang = [noise_f(3)(v, h.avg, h.std) for v, h in zip(ang, self.ang)]
 
-            for h in self.ang:
+            for h in self.pos:
                 h.add_value(0)
-            pos = [noise_filter(3)(h.value, h.avg, h.sq_std) for h in self.pos]
+            pos = [h.value for h in self.pos]
+            pos = [noise_f(3)(v, h.avg, h.std) for v, h in zip(pos, self.pos)]
 
             x, y, z = pos
             p, r, y = ang

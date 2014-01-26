@@ -2,11 +2,17 @@ import math
 import time
 from Togetic.Server.AbstractServer import AbstractServer
 
-class NoiseFilter(object):
-    def __init__(self, size, distance)
+def noise_filter(distance):
+    def _noise_filter(value, avg, sq_std):
+        if (value - avg) ** 2 > distance * sq_std:
+            return avg
+        return value
+    return _noise_filter
+
+class Histo(object):
+    def __init__(self, size)
         super(NoiseFilter, self).__init__()
         self.size = size
-        self.distance = distance
         self.hist = []
         self.sum = 0
         self.sq_sum = 0
@@ -25,6 +31,8 @@ class NoiseFilter(object):
 
     @property
     def value(self):
+        if not self.hist:
+            return 0
         return self.hist[-1]
 
     def add_value(self, value):
@@ -37,10 +45,6 @@ class NoiseFilter(object):
             self.sq_sum -= self.hist[0] ** 2
             self.hist = self.hist[1:]
 
-        if (v - self.avg) ** 2 > self.distance * self.sq_std:
-            return self.avg
-        return v
-
 class FilterHandler(AbstractServer):
     def __init__(self, input_shm, output_shm):
         AbstractServer.__init__(self)
@@ -48,12 +52,13 @@ class FilterHandler(AbstractServer):
         self._out_shm = output_shm
         self._time = None
 
-        self.pos = tuple([NoiseFilter(1, 3) for _ in range(3)])
-        self.ang = tuple([NoiseFilter(1, 3) for _ in range(3)])
+        self.pos = tuple([Histo(1) for _ in range(3)])
+        self.ang = tuple([Histo(1) for _ in range(3)])
 
+        self.acc = tuple([Histo(1) for _ in range(3)])
         self.fX, self.fY, self.fZ = 0, 0, 0
 
-        self.gyr = tuple([NoiseFilter(10, 3) for _ in range(3)])
+        self.gyr = tuple([Histo(10) for _ in range(3)])
 
     def _serve(self):
         alpha = 0.5
@@ -67,13 +72,13 @@ class FilterHandler(AbstractServer):
                 return
             t = in_data[0]
             dt = t - self._time
-            a = tuple(in_data[1:4])
-            g = tuple(in_data[4:7])
-            c = tuple(in_data[7:10])
+            a = in_data[1:4]
+            g = in_data[4:7]
+            c = in_data[7:10]
 
-            print('B', g[0], g[1], g[2])
-            g = tuple([gyr.add_value(v) for gyr, v in zip(self.gyr, g)])
-            print('A', g[0], g[1], g[2])
+            for h, v in zip(self.gyr, g):
+                h.add_value(v)
+            g = [noise_filter(3)(h.value, h.avg, h.sq_std) for h in self.gyr]
 
             self.fX = a[0] * alpha + (self.fX * (1 - alpha))
             self.fY = a[1] * alpha + (self.fY * (1 - alpha))
@@ -83,14 +88,17 @@ class FilterHandler(AbstractServer):
             # self._r = math.atan2(-self.fY, self.fZ)
             # self._y = 0
 
-            def angle(old, gyro):
-                return old + dt * gyro
+            for h, v in zip(self.ang, g):
+                val = h.value + dt * v
+                h.add_value(val)
+            ang = [noise_filter(3)(h.value, h.avg, h.sq_std) for h in self.ang]
 
-            self.ang = tuple([ang.add_value(angle(ang.value, vg))
-                for ang, vg in zip(self.ang, g)])
+            for h in self.ang:
+                h.add_value(0)
+            pos = [noise_filter(3)(h.value, h.avg, h.sq_std) for h in self.pos]
 
-            x, y, z = [pos.value for pos in self.pos]
-            p, r, y = [ang.value for ang in self.ang]
+            x, y, z = pos
+            p, r, y = ang
             x, y, z = 0, 0, 0
             out_data = t, x, y, z, p, r, y
             self._out_shm.data = out_data

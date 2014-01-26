@@ -9,7 +9,6 @@ class SerialHandler(AbstractServer):
         self._shm_serial = shm_serial
         self._shm = shm
         self._name = name
-        time.sleep(5)
 
     def __str__(self):
         return self._name

@@ -51,6 +51,7 @@ class ThreadedSensor(AbstractServer):
             Emitter(shm_data)) #shm_accel, shm_gyro, shm_compass))
 
     def start(self):
+        time.sleep(5) # Wait for the serial to be ready
         for s in [
                 # self._accel_handler,
                 # self._gyro_handler,

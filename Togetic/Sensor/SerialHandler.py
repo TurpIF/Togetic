@@ -18,10 +18,12 @@ class SerialHandler(AbstractServer):
 
     def _serve(self):
         time.sleep(0.01)
+        t = time.time()
         self._shm_serial.acquire()
         self._shm_serial.get(False).write(bytearray(self._request, 'ascii'))
         l = self._shm_serial.get(False).readline()
         self._shm_serial.release()
+        print ('T', time.time() - t)
         try:
             mes = l.decode('ascii').split()
         except UnicodeDecodeError:

@@ -112,17 +112,14 @@ void readingCompass(int * x, int * y, int * z) {
   *z = raw.ZAxis;
 }
 
-void loop() {
-  char c = '\0';
-  while(c != 'r') {
-      c = Serial.read();
-  }
-  int ax = 0, ay = 0, az = 0;
-  int gx = 0, gy = 0, gz = 0;
-  int cx = 0, cy = 0, cz = 0;
-  readingAccel(&ax, &ay, &az);
-  readingGyro(&gx, &gy, &gz);
-  readingCompass(&cx, &cy, &cz);
+/*int ax = 0, ay = 0, az = 0;*/
+/*int gx = 0, gy = 0, gz = 0;*/
+/*int cx = 0, cy = 0, cz = 0;*/
+
+void output_data(
+  int ax, int ay, int az,
+  int gx, int gy, int gz,
+  int cx, int cy, int cz) {
   String sax = String(ax);
   String say = String(ay);
   String saz = String(az);
@@ -135,8 +132,37 @@ void loop() {
   String s =
     sax + " " + say + " " + saz + " " +
     sgx + " " + sgy + " " + sgz + " " +
-    scx + " " + scy + " " + scz
+    scx + " " + scy + " " + scz;
   Serial.println(s);
+}
+
+void loop() {
+  /*readingAccel(&ax, &ay, &az);*/
+  /*readingGyro(&gx, &gy, &gz);*/
+  /*readingCompass(&cx, &cy, &cz);*/
+  /*if(Serial.available() > 0) {*/
+  /*  if('c' == Serial.read()) {*/
+  /*    output_data(*/
+  /*        ax, ay, az,*/
+  /*        gx, gy, gz,*/
+  /*        cx, cy, cz);*/
+  /*  }*/
+  /*}*/
+
+  char c = '\0';
+  while(c != 'r') {
+    c = Serial.read();
+  }
+  int ax = 0, ay = 0, az = 0;
+  int gx = 0, gy = 0, gz = 0;
+  int cx = 0, cy = 0, cz = 0;
+  readingAccel(&ax, &ay, &az);
+  readingGyro(&gx, &gy, &gz);
+  readingCompass(&cx, &cy, &cz);
+  output_data(
+      ax, ay, az,
+      gx, gy, gz,
+      cx, cy, cz);
 }
 
 // vim: set syntax=cpp sw=2 ts=2 et:

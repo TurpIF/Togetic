@@ -57,12 +57,10 @@ class FilterHandler(AbstractServer):
         self._out_shm = output_shm
         self._time = None
 
-        self.pos = tuple([Histo(1) for _ in range(3)])
-        self.ang = tuple([Histo(1) for _ in range(3)])
-
-        self.acc = tuple([Histo(1) for _ in range(3)])
-
-        self.gyr = tuple([Histo(10) for _ in range(3)])
+        self.pos = [Histo(1) for _ in range(3)]
+        self.ang = [Histo(1) for _ in range(3)]
+        self.acc = [Histo(2) for _ in range(3)]
+        self.gyr = [Histo(10) for _ in range(3)]
 
     def _serve(self):
         alpha = 0.5

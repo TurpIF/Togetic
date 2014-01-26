@@ -48,16 +48,8 @@ class FilterHandler(AbstractServer):
         self._out_shm = output_shm
         self._time = None
 
-        self.gyro_sens = 1#6500000.536
-        self.accel_sens = 1
-
-        self._x = 0
-        self._y = 0
-        self._z = 0
-
-        self._p = 0
-        self._r = 0
-        self._y = 0
+        self.pos = tuple([NoiseFilter(1, 3) for _ in range(3)])
+        self.ang = tuple([NoiseFilter(1, 3) for _ in range(3)])
 
         self.fX, self.fY, self.fZ = 0, 0, 0
 
@@ -91,13 +83,14 @@ class FilterHandler(AbstractServer):
             # self._r = math.atan2(-self.fY, self.fZ)
             # self._y = 0
 
-            self._p += dt * g[0]
-            self._r += dt * g[1]
-            self._y += dt * g[2]
+            def angle(old, gyro):
+                return old + dt * gyro
 
-            x, y, z = a
-            # print(x*x+y*y+z*z)
-            p, r, y = self._p, self._r, self._y
+            self.ang = tuple([ang.add_value(angle(ang.value, vg))
+                for ang, vg in zip(self.ang, g)])
+
+            x, y, z = [pos.value for pos in self.pos]
+            p, r, y = [ang.value for ang in self.ang]
             x, y, z = 0, 0, 0
             out_data = t, x, y, z, p, r, y
             self._out_shm.data = out_data

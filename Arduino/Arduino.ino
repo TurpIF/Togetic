@@ -11,7 +11,7 @@
 int L3G4200D_Address = 105; //I2C address of the L3G4200D
 
 void setupGyro() {
-  setupL3G4200D(500); // Configure L3G4200  - 250, 500 or 2000 deg/sec
+  setupL3G4200D(250); // Configure L3G4200  - 250, 500 or 2000 deg/sec
 }
 
 void readingGyro(int * x, int * y, int * z) {

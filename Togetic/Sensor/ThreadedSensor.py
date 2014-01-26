@@ -15,27 +15,28 @@ class ThreadedSensor(AbstractServer):
         AbstractServer.__init__(self)
 
         # Offset en bits
-        gyr_offset_x = 4.18973187447
-        gyr_offset_y = -7.3076830588
-        gyr_offset_z = 14.5367319947
-        gyr_scale = math.pi / 180.0 * 17.50 / 1000 # bits -> deg -> rad
+        # gyr_offset_x = 4.18973187447
+        # gyr_offset_y = -7.3076830588
+        # gyr_offset_z = 14.5367319947
+        acc_scale = 31.2 / 1000
+        gyr_scale = math.pi / 180.0 * 8.75 / 1000 # bits -> deg -> rad
 
         tr_accel = lambda bits: (
-                1.0 * bits[0] + 0.0,
-                1.0 * bits[1] + 0.0,
-                1.0 * bits[2] + 0.0)
-        tr_gyro = lambda bits: (
-                (bits[0] - gyr_offset_x) * gyr_scale,
-                (bits[1] - gyr_offset_y) * gyr_scale,
-                (bits[2] - gyr_offset_z) * gyr_scale)
+                acc_scale * bits[0] + 0.0,
+                acc_scale * bits[1] + 0.0,
+                acc_scale * bits[2] + 0.0)
+        tr_gyro = lambda bits, avg: (
+                (bits[0] - avg[0]) * gyr_scale,
+                (bits[1] - avg[1]) * gyr_scale,
+                (bits[2] - avg[2]) * gyr_scale)
         tr_compass = lambda bits: (
                 1.0 * bits[0] + 0.0,
                 1.0 * bits[1] + 0.0,
                 1.0 * bits[2] + 0.0)
 
-        transformation = lambda bits: (
+        transformation = lambda bits, g_avg: (
             tr_accel(bits[0:3]) +
-            tr_gyro(bits[3:6]) +
+            tr_gyro(bits[3:6], g_avg) +
             tr_compass(bits[6:9]))
 
         shm_data = shm()

@@ -62,7 +62,7 @@ class FilterHandler(AbstractServer):
         self.pos = [Histo(1) for _ in range(3)]
         self.ang = [Histo(1) for _ in range(3)]
         self.acc = [Histo(2) for _ in range(3)]
-        self.gyr = [Histo(10) for _ in range(3)]
+        self.gyr = [Histo(1) for _ in range(3)]
 
     def _serve(self):
         alpha = 0.5
@@ -95,9 +95,15 @@ class FilterHandler(AbstractServer):
             # self._r = math.atan2(-self.fY, self.fZ)
             # self._y = 0
 
-            for h, v in zip(self.ang, g):
-                val = h.value + dt * v
-                h.add_value(val)
+            vx = math.atan2(a[0], math.sqrt(a[1]**2 + a[2]**2))
+            vy = math.atan2(-a[1], a[2])
+            vz = 0
+            self.ang[0].add_value(vx)
+            self.ang[1].add_value(vy)
+            self.ang[2].add_value(vz)
+            # for h, v in zip(self.ang, g):
+            #     val = h.value + dt * v
+            #     h.add_value(val)
             ang = [h.value for h in self.ang]
             ang = [noise_f(3)(v, h) for v, h in zip(ang, self.ang)]
 
@@ -107,9 +113,9 @@ class FilterHandler(AbstractServer):
             pos = [noise_f(3)(v, h) for v, h in zip(pos, self.pos)]
 
             x, y, z = pos
-            p, r, y = ang
+            u, v, w = ang
             x, y, z = 0, 0, 0
-            out_data = t, x, y, z, p, r, y
+            out_data = t, x, y, z, u, v, w
             self._out_shm.data = out_data
             self._time = t
         time.sleep(0.01)

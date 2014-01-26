@@ -55,6 +55,9 @@ void ADXL345::begin()
 {
         byte data = 0x08;
         writeRegister(ADXL345::POWER_CTL, 1, &data);
+        delay(5);
+        byte data2 = 0x0B;
+        writeRegister(ADXL345::DATA_FORMAT, 1, &data2);
 }
 
 void ADXL345::end()

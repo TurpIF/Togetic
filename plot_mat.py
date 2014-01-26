@@ -11,8 +11,15 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation
 import random
+import argparse
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--input', required=True, metavar='input', type=str,
+        help='Filename of the socket to read in')
+parsed_args = parser.parse_args()
 
+# shortcuts for command-line args
+addr = parsed_args.input
 
 ##############################   constants
 nb_points = 1000
@@ -46,7 +53,7 @@ def get_random_data():
 #############################    socket connection
 print("INIT: socket")
 sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-sock.connect('/tmp/togetic_sortie_filtre')
+sock.connect(addr)
 file_sock = sock.makefile('r', bufsize=0)
 thread = threading.Thread(target=read_data, args=(file_sock, queue, nb_var))
 thread.start()
@@ -58,9 +65,9 @@ fig, (ax1, ax2) = plt.subplots(2, sharex=True)
 
 # axes limits
 ax1.set_xlim((0, 1000))
-ax1.set_ylim((-1100, 1100))
+ax1.set_ylim((-2, 2))
 ax2.set_xlim((0, 1000))
-ax2.set_ylim((-2100, 2100))
+ax2.set_ylim((-4, 7))
 
 print("INIT: plots creation")
 # init plots (create one line object for each data)

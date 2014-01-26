@@ -17,7 +17,7 @@ def Emitter(shm_data): #shm_accel, shm_gyro, shm_magnet):
             # data_accel = list(shm_accel.data)
             # data_gyro = list(shm_gyro.data)
             # data_magnet = list(shm_magnet.data)
-            data = [time.time()] + data # data_accel + data_gyro + data_magnet
+            # data = [time.time()] + data # data_accel + data_gyro + data_magnet
             str_data = ' '.join(map(str, data))
             data_str = 'T ' + str_data
             return data_str + '\n'

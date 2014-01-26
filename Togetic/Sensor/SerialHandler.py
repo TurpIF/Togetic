@@ -9,6 +9,7 @@ class SerialHandler(AbstractServer):
         self._shm_serial = shm_serial
         self._shm = shm
         self._name = name
+        time.sleep(5)
 
     def __str__(self):
         return self._name
@@ -24,6 +25,7 @@ class SerialHandler(AbstractServer):
         l = self._shm_serial.get(False).readline()
         self._shm_serial.release()
         print ('T', time.time() - t)
+        print ('B', l)
         try:
             mes = l.decode('ascii').split()
         except UnicodeDecodeError:
@@ -40,4 +42,4 @@ class SerialHandler(AbstractServer):
                     print('A', (ax, ay, az))
                     print('G', (gx, gy, gz))
                     print('C', (cx, cy, cz))
-                    self._shm.data = (ax, ay, az, gx, gy, gz, cx, cy, cz)
+                    self._shm.data = (t, ax, ay, az, gx, gy, gz, cx, cy, cz)

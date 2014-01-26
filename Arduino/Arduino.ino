@@ -123,23 +123,20 @@ void loop() {
   readingAccel(&ax, &ay, &az);
   readingGyro(&gx, &gy, &gz);
   readingCompass(&cx, &cy, &cz);
-  Serial.print(ax);
-  Serial.print(" ");
-  Serial.print(ay);
-  Serial.print(" ");
-  Serial.print(az);
-  Serial.print(" ");
-  Serial.print(gx);
-  Serial.print(" ");
-  Serial.print(gy);
-  Serial.print(" ");
-  Serial.print(gz);
-  Serial.print(" ");
-  Serial.print(cx);
-  Serial.print(" ");
-  Serial.print(cy);
-  Serial.print(" ");
-  Serial.println(cz);
+  String sax = String(ax);
+  String say = String(ay);
+  String saz = String(az);
+  String scx = String(cx);
+  String scy = String(cy);
+  String scz = String(cz);
+  String sgx = String(gx);
+  String sgy = String(gy);
+  String sgz = String(gz);
+  String s =
+    sax + " " + say + " " + saz + " " +
+    sgx + " " + sgy + " " + sgz + " " +
+    scx + " " + scy + " " + scz
+  Serial.println(s);
 }
 
 // vim: set syntax=cpp sw=2 ts=2 et:

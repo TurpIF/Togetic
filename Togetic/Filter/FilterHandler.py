@@ -2,6 +2,45 @@ import math
 import time
 from Togetic.Server.AbstractServer import AbstractServer
 
+class NoiseFilter(object):
+    def __init__(self, size, distance)
+        super(NoiseFilter, self).__init__()
+        self.size = size
+        self.distance = distance
+        self.hist = []
+        self.sum = 0
+        self.sq_sum = 0
+
+    @property
+    def avg(self):
+        if len(self.hist) == 0:
+            return 0
+        return self.sum * 1.0 / len(self.hist)
+
+    @property
+    def sq_std(self):
+        if len(self.hist) == 0:
+            return 0
+        return (self.sq_sum - self.sum) * 1.0 / len(self.hist)
+
+    @property
+    def value(self):
+        return self.hist[-1]
+
+    def add_value(self, value):
+        self.sum += value
+        self.sq_sum += value ** 2
+        self.hist += [value]
+
+        if len(self.hist) > self.size:
+            self.sum -= self.hist[0]
+            self.sq_sum -= self.hist[0] ** 2
+            self.hist = self.hist[1:]
+
+        if (v - self.avg) ** 2 > self.distance * self.sq_std:
+            return self.avg
+        return v
+
 class FilterHandler(AbstractServer):
     def __init__(self, input_shm, output_shm):
         AbstractServer.__init__(self)
@@ -16,17 +55,13 @@ class FilterHandler(AbstractServer):
         self._y = 0
         self._z = 0
 
-        self._pitch = 0
-        self._roll = 0
-        self._yaw = 0
+        self._p = 0
+        self._r = 0
+        self._y = 0
 
         self.fX, self.fY, self.fZ = 0, 0, 0
 
-        self._gyr = []
-        self._gyr_avg = None
-        self._gyr_sq_avg = None
-        self._gyr_size = 10
-        self._gyr_dist = 3
+        self.gyr = tuple([NoiseFilter(10, 3) for _ in range(3)])
 
     def _serve(self):
         alpha = 0.5
@@ -40,68 +75,31 @@ class FilterHandler(AbstractServer):
                 return
             t = in_data[0]
             dt = t - self._time
-            acc_x, acc_y, acc_z = in_data[1:4]
-            gyr = gyr_x, gyr_y, gyr_z = in_data[4:7]
-            mag_x, mag_y, mag_z = in_data[7:10]
+            a = tuple(in_data[1:4])
+            g = tuple(in_data[4:7])
+            c = tuple(in_data[7:10])
 
-            print('B', gyr_x, gyr_y, gyr_z)
-            if len(self._gyr) == 0:
-                self._gyr = [gyr for _ in range(self._gyr_size)]
-                self._gyr_avg = self._gyr[0]
-                self._gyr_sq_avg = tuple([self._gyr_size * d**2
-                    for d in self._gyr[0]])
-            else:
-                std_sq = tuple([sq_avg / self._gyr_size - avg**2
-                    for sq_avg, avg in zip(self._gyr_sq_avg, self._gyr_avg)])
+            print('B', g[0], g[1], g[2])
+            g = tuple([gyr.add_value(v) for gyr, v in zip(self.gyr, g)])
+            print('A', g[0], g[1], g[2])
 
-                self._gyr_avg = tuple([avg + (v - old) / self._gyr_size
-                    for old, v, avg in
-                    zip(self._gyr[0], gyr, self._gyr_avg)])
-                self._gyr_sq_avg = tuple([sq_avg + (v**2 - old**2)
-                    for old, v, sq_avg in
-                    zip(self._gyr[0], gyr, self._gyr_sq_avg)])
-                self._gyr = self._gyr[1:] + [gyr]
+            self.fX = a[0] * alpha + (self.fX * (1 - alpha))
+            self.fY = a[1] * alpha + (self.fY * (1 - alpha))
+            self.fZ = a[2] * alpha + (self.fZ * (1 - alpha))
 
-                # if False in [(v - avg)**2 <= self._gyr_dist * s
-                #         for v, avg, s in zip(gyr, self._gyr_avg, std_sq)]:
-                #     gyr = gyr_x, gyr_y, gyr_z = self._gyr_avg
+            # self._p = math.atan2(self.fX, math.sqrt(self.fY**2 + self.fZ**2))
+            # self._r = math.atan2(-self.fY, self.fZ)
+            # self._y = 0
 
-            print('A', gyr_x, gyr_y, gyr_z)
-            self.fX = acc_x * alpha + (self.fX * (1 - alpha))
-            self.fY = acc_y * alpha + (self.fY * (1 - alpha))
-            self.fZ = acc_z * alpha + (self.fZ * (1 - alpha))
+            self._p += dt * g[0]
+            self._r += dt * g[1]
+            self._y += dt * g[2]
 
-            # self._pitch = math.atan2(self.fX, math.sqrt(self.fY**2 + self.fZ**2))
-            # self._roll = math.atan2(-self.fY, self.fZ)
-            # self._yaw = 0
-
-            self._pitch += dt * gyr_x
-            self._roll += dt * gyr_y
-            self._yaw += dt * gyr_z
-
-            # force = abs(acc_x) + abs(acc_y) + abs(acc_z)
-            # if True or 8192 < force < 32768:
-            #     pitch_acc = math.atan2(acc_y, acc_z) * 180 / math.pi
-            #     self._pitch = self._pitch * 0.98 + pitch_acc * 0.02;
-
-            # self._pitch %= math.pi
-            # self._roll %= math.pi
-            # self._yaw %= math.pi
-
-            # print((self._pitch, self._roll))
-
-            x = acc_x
-            y = acc_y
-            z = acc_z
+            x, y, z = a
             # print(x*x+y*y+z*z)
-            theta = self._pitch
-            phi = self._roll
-            psy = self._yaw
-            # theta = gyr_x
-            # phi = gyr_y
-            # psy = gyr_z
+            p, r, y = self._p, self._r, self._y
             x, y, z = 0, 0, 0
-            out_data = t, x, y, z, theta, phi, psy
+            out_data = t, x, y, z, p, r, y
             self._out_shm.data = out_data
             self._time = t
         time.sleep(0.01)

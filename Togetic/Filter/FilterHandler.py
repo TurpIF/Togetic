@@ -3,20 +3,22 @@ import time
 from Togetic.Server.AbstractServer import AbstractServer
 
 def noise_f(distance):
-    def _noise_f(value, avg, sq_std):
-        if (value - avg) ** 2 > distance * sq_std:
-            return avg
+    def _noise_f(value, histo):
+        if (value - histo.avg) ** 2 > distance * histo.std:
+            return histo.avg
         return value
     return _noise_f
 
-def lowpass(alpha):
-    def _lowpass_f(value, avg, sq_std):
+def lowpass_f(alpha):
+    def _lowpass_f(value, histo):
+        if len(histo.hist) >= 2:
+            return histo.hist[-2] * alpha + value * (1.0 - alpha)
         return value
     return _lowpass_f
 
 class Histo(object):
-    def __init__(self, size)
-        super(NoiseFilter, self).__init__()
+    def __init__(self, size):
+        super(Histo, self).__init__()
         self.size = size
         self.hist = []
         self.sum = 0
@@ -81,13 +83,13 @@ class FilterHandler(AbstractServer):
             for h, v in zip(self.gyr, g):
                 h.add_value(v)
             g = [h.value for h in self.gyr]
-            g = [noise_f(3)(v, h.avg, h.std) for v, h in zip(g, self.gyr)]
+            g = [noise_f(3)(v, h) for v, h in zip(g, self.gyr)]
 
             for h, v in zip(self.acc, a):
                 h.add_value(v)
             a = [h.value for h in self.gyr]
-            a = [noise_f(3)(v, h.avg, h.std) for v, h in zip(a, self.acc)]
-            a = [lowpass_f(0.5)(v, h.avg, h.std) for v, h in zip(a, self.acc)]
+            a = [noise_f(3)(v, h) for v, h in zip(a, self.acc)]
+            a = [lowpass_f(0.5)(v, h) for v, h in zip(a, self.acc)]
 
             # self._p = math.atan2(self.fX, math.sqrt(self.fY**2 + self.fZ**2))
             # self._r = math.atan2(-self.fY, self.fZ)
@@ -97,12 +99,12 @@ class FilterHandler(AbstractServer):
                 val = h.value + dt * v
                 h.add_value(val)
             ang = [h.value for h in self.ang]
-            ang = [noise_f(3)(v, h.avg, h.std) for v, h in zip(ang, self.ang)]
+            ang = [noise_f(3)(v, h) for v, h in zip(ang, self.ang)]
 
             for h in self.pos:
                 h.add_value(0)
             pos = [h.value for h in self.pos]
-            pos = [noise_f(3)(v, h.avg, h.std) for v, h in zip(pos, self.pos)]
+            pos = [noise_f(3)(v, h) for v, h in zip(pos, self.pos)]
 
             x, y, z = pos
             p, r, y = ang

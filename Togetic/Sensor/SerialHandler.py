@@ -11,6 +11,7 @@ class SerialHandler(AbstractServer):
         self._name = name
         self._calibrated = False
         self._gyr_avg = [0, 0, 0]
+        self._acc_avg = [0, 0, 0]
         self._avg_size = 50
         self._avg_cur = 0
 
@@ -37,6 +38,9 @@ class SerialHandler(AbstractServer):
             if len(mes) == 9:
                 if not self._calibrated:
                     try:
+                        # self._acc_avg[0] += float(mes[0])
+                        # self._acc_avg[1] += float(mes[1])
+                        # self._acc_avg[2] += float(mes[2])
                         self._gyr_avg[0] += float(mes[3])
                         self._gyr_avg[1] += float(mes[4])
                         self._gyr_avg[2] += float(mes[5])
@@ -46,6 +50,9 @@ class SerialHandler(AbstractServer):
                         self._avg_cur += 1
                         if self._avg_cur >= self._avg_size:
                             self._calibrated = True
+                            self._acc_avg[0] /= self._avg_size
+                            self._acc_avg[1] /= self._avg_size
+                            self._acc_avg[2] /= self._avg_size
                             self._gyr_avg[0] /= self._avg_size
                             self._gyr_avg[1] /= self._avg_size
                             self._gyr_avg[2] /= self._avg_size

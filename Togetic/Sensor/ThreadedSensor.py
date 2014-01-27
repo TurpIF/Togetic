@@ -18,13 +18,13 @@ class ThreadedSensor(AbstractServer):
         # gyr_offset_x = 4.18973187447
         # gyr_offset_y = -7.3076830588
         # gyr_offset_z = 14.5367319947
-        acc_scale = 31.2 / 1000 # bits -> mg -> g
+        acc_scale = 1.0 # bits -> mg -> g
         gyr_scale = math.pi / 180.0 * 8.75 / 1000 # bits -> deg -> rad
 
         tr_accel = lambda bits, avg: (
-                (bits[0] - avg[0]) * acc_scale,
-                (bits[1] - avg[1]) * acc_scale,
-                (bits[2] - avg[2]) * acc_scale)
+                (bits[0] - avg[0]) * 0.00376390 * acc_scale,
+                (bits[1] - avg[1]) * 0.00376009 * acc_scale,
+                (bits[2] - avg[2]) * 0.00349265 * acc_scale + 1)
         tr_gyro = lambda bits, avg: (
                 (bits[0] - avg[0]) * gyr_scale,
                 (bits[1] - avg[1]) * gyr_scale,

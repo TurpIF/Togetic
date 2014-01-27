@@ -38,9 +38,9 @@ class SerialHandler(AbstractServer):
             if len(mes) == 9:
                 if not self._calibrated:
                     try:
-                        # self._acc_avg[0] += float(mes[0])
-                        # self._acc_avg[1] += float(mes[1])
-                        # self._acc_avg[2] += float(mes[2])
+                        self._acc_avg[0] += float(mes[0])
+                        self._acc_avg[1] += float(mes[1])
+                        self._acc_avg[2] += float(mes[2])
                         self._gyr_avg[0] += float(mes[3])
                         self._gyr_avg[1] += float(mes[4])
                         self._gyr_avg[2] += float(mes[5])
@@ -59,7 +59,8 @@ class SerialHandler(AbstractServer):
                 else:
                     try:
                         ax, ay, az, gx, gy, gz, cx, cy, cz = \
-                                self._transformation(list(map(float, mes)), self._gyr_avg)
+                                self._transformation(list(map(float, mes)),
+                                        self._acc_avg, self._gyr_avg)
                         if abs(float(mes[3])) > 30000 \
                                 or abs(float(mes[4])) > 30000 \
                                 or abs(float(mes[5])) > 30000:

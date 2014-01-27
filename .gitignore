@@ -40,3 +40,6 @@ nosetests.xml
 
 # Fichier de données en masse
 *.dat
+
+*.blend1
+*.blend2

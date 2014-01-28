@@ -17,8 +17,8 @@ plt.subplots_adjust(bottom=0.35)
 l, = plt.plot(x, y, label='XY')
 
 # range of the sliders
-dil = 5
-center = 10
+dil = 4
+center = 4
 
 if len(sys.argv) > 1 :
     square_x = 10.0
@@ -34,8 +34,8 @@ ax_cy = plt.axes([0.25, 0.25, 0.65, 0.03])
 
 s_dx = Slider(ax_dx, 'Dilatation x', -dil, dil, valinit=1.0)
 s_dy = Slider(ax_dy, 'Dilatation y', -center, center, valinit=1.0)
-s_cx = Slider(ax_cx, 'Centre y', -100.0, 100.0, valinit=0.0)
-s_cy = Slider(ax_cy, 'Centre y', -100.0, 100.0, valinit=0.0)
+s_cx = Slider(ax_cx, 'Centre y', -50.0, 50.0, valinit=0.0)
+s_cy = Slider(ax_cy, 'Centre y', -50.0, 50.0, valinit=0.0)
 
 def update(val):
     dx = s_dx.val

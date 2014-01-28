@@ -30,9 +30,9 @@ class ThreadedSensor(AbstractServer):
                 (bits[1] - avg[1]) * gyr_scale,
                 (bits[2] - avg[2]) * gyr_scale)
         tr_compass = lambda bits: (
-                1.0 * bits[0] + 0.0,
-                1.0 * bits[1] + 0.0,
-                1.0 * bits[2] + 0.0)
+                0.019292 * (bits[0] - 50.097),
+                0.019780 * (bits[1] + 313.964),
+                0.018400 * (bits[2] - 197.500))
 
         transformation = lambda bits, a_avg, g_avg: (
             tr_accel(bits[0:3], a_avg) +

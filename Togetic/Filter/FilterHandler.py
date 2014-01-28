@@ -106,14 +106,14 @@ class FilterHandler(AbstractServer):
             alpha = 0.1
             vx = vax * alpha + vgx * (1 - alpha)
             vy = vay * alpha + vgy * (1 - alpha)
-            vaz = math.atan((c[0] * math.cos(vx) \
-                    + c[1] * math.sin(vy) * math.sin(vx) \
-                    - c[2] * math.cos(vy) * math.sin(vx)) \
-                    / (c[1] * math.cos(vy) \
-                    + c[2] * math.sin(vy)))
+            vaz = math.atan((c[0] * math.cos(vy) \
+                    + c[1] * math.sin(vx) * math.sin(vy) \
+                    - c[2] * math.cos(vx) * math.sin(vy)) \
+                    / (c[1] * math.cos(vx) \
+                    + c[2] * math.sin(vx)))
             vx = 0
             vy = 0
-            vgz = 0
+            # vgz = 0
             self.ang[0].add_value(vx)
             self.ang[1].add_value(vy)
             # self.ang[2].add_value(vaz * alpha + vgz * (1 - alpha))

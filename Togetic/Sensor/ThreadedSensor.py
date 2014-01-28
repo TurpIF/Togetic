@@ -43,7 +43,7 @@ class ThreadedSensor(AbstractServer):
         # shm_accel = shm()
         # shm_gyro = shm()
         # shm_compass = shm()
-        shm_serial = shm(serial.Serial(addr_input, 115200, timeout=0.01))
+        shm_serial = shm(serial.Serial(addr_input, 115200, timeout=0))
         self._handler = SerialHandler('R', 'r', transformation, shm_serial, shm_data)
         # self._accel_handler = SerialHandler('A', 'a', tr_accel, shm_serial, shm_accel)
         # self._gyro_handler = SerialHandler('G', 'g', tr_gyro, shm_serial, shm_gyro)

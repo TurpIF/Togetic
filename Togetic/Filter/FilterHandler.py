@@ -63,7 +63,7 @@ class FilterHandler(AbstractServer):
         self.ang = [Histo(10) for _ in range(3)]
         self.acc = [Histo(10) for _ in range(3)]
         self.gyr = [Histo(50) for _ in range(3)]
-        self.com = [Histo(1) for _ in range(3)]
+        self.com = [Histo(10) for _ in range(3)]
 
     def _serve(self):
         alpha = 0.5
@@ -100,14 +100,22 @@ class FilterHandler(AbstractServer):
 # TODO vérifier qu'on est pas supérieur à 1.3G de norme
             vax = math.atan2(a[0], math.sqrt(a[1]**2 + a[2]**2))
             vay = math.atan2(-a[1], a[2])
-            vaz = math.atan2(c[1], c[0])
             vgx = self.ang[0].value + dt * g[0]
             vgy = self.ang[1].value + dt * g[1]
             vgz = self.ang[2].value + dt * g[2]
-            vgz = 0 # Pas de z pour le moment
             alpha = 0.1
-            self.ang[0].add_value(vax * alpha + vgx * (1 - alpha))
-            self.ang[1].add_value(vay * alpha + vgy * (1 - alpha))
+            vx = vax * alpha + vgx * (1 - alpha)
+            vy = vay * alpha + vgy * (1 - alpha)
+            vaz = math.atan((c[0] * math.cos(vx) \
+                    + c[1] * math.sin(vy) * math.sin(vx) \
+                    - c[2] * math.cos(vy) * math.sin(vx)) \
+                    / (c[1] * math.cos(vy) \
+                    + c[2] * math.sin(vy)))
+            vx = 0
+            vy = 0
+            vgz = 0
+            self.ang[0].add_value(vx)
+            self.ang[1].add_value(vy)
             # self.ang[2].add_value(vaz * alpha + vgz * (1 - alpha))
             self.ang[2].add_value(vaz)
             # for h, v in zip(self.ang, g):

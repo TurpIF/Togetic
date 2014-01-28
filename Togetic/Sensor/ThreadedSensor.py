@@ -15,27 +15,28 @@ class ThreadedSensor(AbstractServer):
         AbstractServer.__init__(self)
 
         # Offset en bits
-        gyr_offset_x = 4.18973187447
-        gyr_offset_y = -7.3076830588
-        gyr_offset_z = 14.5367319947
-        gyr_scale = math.pi / 180.0 * 17.50 / 1000 # bits -> deg -> rad
+        # gyr_offset_x = 4.18973187447
+        # gyr_offset_y = -7.3076830588
+        # gyr_offset_z = 14.5367319947
+        acc_scale = 1.0 # bits -> mg -> g
+        gyr_scale = math.pi / 180.0 * 8.75 / 1000 # bits -> deg -> rad
 
-        tr_accel = lambda bits: (
-                1.0 * bits[0] + 0.0,
-                1.0 * bits[1] + 0.0,
-                1.0 * bits[2] + 0.0)
-        tr_gyro = lambda bits: (
-                (bits[0] - gyr_offset_x) * gyr_scale,
-                (bits[1] - gyr_offset_y) * gyr_scale,
-                (bits[2] - gyr_offset_z) * gyr_scale)
+        tr_accel = lambda bits, avg: (
+                (bits[0] - avg[0]) * 0.00376390 * acc_scale,
+                (bits[1] - avg[1]) * 0.00376009 * acc_scale,
+                (bits[2] - avg[2]) * 0.00349265 * acc_scale + 1)
+        tr_gyro = lambda bits, avg: (
+                (bits[0] - avg[0]) * gyr_scale,
+                (bits[1] - avg[1]) * gyr_scale,
+                (bits[2] - avg[2]) * gyr_scale)
         tr_compass = lambda bits: (
                 1.0 * bits[0] + 0.0,
                 1.0 * bits[1] + 0.0,
                 1.0 * bits[2] + 0.0)
 
-        transformation = lambda bits: (
-            tr_accel(bits[0:3]) +
-            tr_gyro(bits[3:6]) +
+        transformation = lambda bits, a_avg, g_avg: (
+            tr_accel(bits[0:3], a_avg) +
+            tr_gyro(bits[3:6], g_avg) +
             tr_compass(bits[6:9]))
 
         shm_data = shm()
@@ -51,6 +52,7 @@ class ThreadedSensor(AbstractServer):
             Emitter(shm_data)) #shm_accel, shm_gyro, shm_compass))
 
     def start(self):
+        time.sleep(5) # Wait for the serial to be ready
         for s in [
                 # self._accel_handler,
                 # self._gyro_handler,

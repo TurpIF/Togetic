@@ -26,7 +26,7 @@ class PositionController:
                     + mathutils.Vector((x, y, z))
             ori = self._owner.orientation.to_euler()
             ori.x = theta
-            ori.y = phy
+            ori.y = -phy
             ori.z = psy
             self._owner.orientation = ori
             print(time.time() - t, t, x, y, z, ori.x, ori.y, ori.z)

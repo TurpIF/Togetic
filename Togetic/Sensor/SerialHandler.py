@@ -12,7 +12,7 @@ class SerialHandler(AbstractServer):
         self._calibrated = False
         self._gyr_avg = [0, 0, 0]
         self._acc_avg = [0, 0, 0]
-        self._avg_size = 50
+        self._avg_size = 500
         self._avg_cur = 0
 
     def __str__(self):

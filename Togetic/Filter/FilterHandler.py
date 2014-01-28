@@ -111,13 +111,13 @@ class FilterHandler(AbstractServer):
                     - c[2] * math.cos(vx) * math.sin(vy)) \
                     / (c[1] * math.cos(vx) \
                     + c[2] * math.sin(vx)))
-            vx = 0
-            vy = 0
+            # vx = 0
+            # vy = 0
             # vgz = 0
             self.ang[0].add_value(vx)
             self.ang[1].add_value(vy)
             # self.ang[2].add_value(vaz * alpha + vgz * (1 - alpha))
-            self.ang[2].add_value(vaz)
+            self.ang[2].add_value(vgz)
             # for h, v in zip(self.ang, g):
             #     val = h.value + dt * v
             #     h.add_value(val)

@@ -99,18 +99,23 @@ class FilterHandler(AbstractServer):
 
 # TODO vérifier qu'on est pas supérieur à 1.3G de norme
             vax = math.atan2(a[0], math.sqrt(a[1]**2 + a[2]**2))
-            vay = math.atan2(-a[1], a[2])
+            vay = math.atan2(a[1], math.sqrt(a[0]**2 + a[2]**2))
+            if a[2] < 0:
+                vay = math.pi / 2.0 +  (math.pi / 2.0 - math.copysign(vay, a[1]))
+            # vay = math.atan2(-a[1], a[2])
             vgx = self.ang[0].value + dt * g[0]
             vgy = self.ang[1].value + dt * g[1]
             vgz = self.ang[2].value + dt * g[2]
             alpha = 0.1
             vx = vax * alpha + vgx * (1 - alpha)
             vy = vay * alpha + vgy * (1 - alpha)
-            vaz = math.atan((c[0] * math.cos(vy) \
-                    + c[1] * math.sin(vx) * math.sin(vy) \
-                    - c[2] * math.cos(vx) * math.sin(vy)) \
-                    / (c[1] * math.cos(vx) \
-                    + c[2] * math.sin(vx)))
+            vaz = 0
+# TODO gérer les divisions par zéro
+            # vaz = math.atan((c[0] * math.cos(vy) \
+            #         + c[1] * math.sin(vx) * math.sin(vy) \
+            #         - c[2] * math.cos(vx) * math.sin(vy)) \
+            #         / (c[1] * math.cos(vx) \
+            #         + c[2] * math.sin(vx)))
             # vx = 0
             # vy = 0
             # vgz = 0
@@ -124,6 +129,7 @@ class FilterHandler(AbstractServer):
             ang = [h.value for h in self.ang]
             ang = [noise_f(3)(v, h) for v, h in zip(ang, self.ang)]
             print('A', ang[0], ang[1], ang[2])
+            print('a', str(a[0])[:6], str(a[1])[:6], str(a[2])[:6])
             # ang = [lowpass_f(0.5)(v, h) for v, h in zip(ang, self.ang)]
 
             for h in self.pos:

@@ -12,6 +12,7 @@ from matplotlib import pyplot as plt
 from matplotlib import animation
 import random
 import argparse
+import math
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--input', required=True, metavar='input', type=str,
@@ -38,7 +39,8 @@ def read_data(file_in, queue, nbr_data):
         if len(line) == nbr_data + 1 and line[0] == 'T':
             try:
                 f = list(map(float, line[1:]))
-                print time.time() - f[0]
+                # print time.time() - f[0]
+                f = f[0:4] + [x / math.pi * 180.0 for x in f[4:]]
             except ValueError:
                 pass
             else:
@@ -67,7 +69,7 @@ fig, (ax1, ax2) = plt.subplots(2, sharex=True)
 ax1.set_xlim((0, 1000))
 ax1.set_ylim((-2, 2))
 ax2.set_xlim((0, 1000))
-ax2.set_ylim((-4, 7))
+ax2.set_ylim((-185, 185))
 
 print("INIT: plots creation")
 # init plots (create one line object for each data)

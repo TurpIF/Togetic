@@ -97,7 +97,7 @@ class FilterHandler(AbstractServer):
             a = [noise_f(3)(v, h) for v, h in zip(a, self.acc)]
             a = [lowpass_f(0.5)(v, h) for v, h in zip(a, self.acc)]
 
-# TODO vérifier qu'on est pas supérieur à 1.3G de norme
+# TODO verifier qu'on est pas superieur a 1.3G de norme
             vax = math.atan2(a[0], math.sqrt(a[1]**2 + a[2]**2))
             vay = math.atan2(a[1], math.sqrt(a[0]**2 + a[2]**2))
             if a[2] < 0:
@@ -110,7 +110,7 @@ class FilterHandler(AbstractServer):
             vx = vax * alpha + vgx * (1 - alpha)
             vy = vay * alpha + vgy * (1 - alpha)
             vaz = 0
-# TODO gérer les divisions par zéro
+# TODO gerer les divisions par zero
             # vaz = math.atan((c[0] * math.cos(vy) \
             #         + c[1] * math.sin(vx) * math.sin(vy) \
             #         - c[2] * math.cos(vx) * math.sin(vy)) \

@@ -1,0 +1,35 @@
+Envoie du programme sur l'arduino :
+- Ouvrez l'application 'Arduino IDE'.
+- Ouvrir le fichier /home/clubelek/Togetic/Arduino/Arduino.ino
+- Téléverser le programme avec Ctrl+U
+- Si l'application demande d'essayer avec /dev/ttyACM0, cliquez sur valider
+  (même chose pour /dev/ttyACM1)
+
+Démarrage du script de récupération des données :
+- Poser le capteur bien à plat sur une surface plane qui ne bouge pas (dans un
+  étau de préférence).
+- Ne touchez pas le capteur pendant le lancement.
+- Ouvrir un terminal
+- Se déplacer jusqu'au dossier /home/clubelek/Togetic (cd
+  /home/clubelek/Togetic)
+- Lancer le script (./Sensor.py --input /dev/ttyACM0 --output /tmp/togetic-0)
+- Si il y a une erreur avec /dev/ttyACM0, essayez avec /dev/ttyACM1
+- Si il y a toujours une erreur, appelez quelqu'un
+- Attendre jusqu'à ce qu'il y ait du texte affiché sur le terminal (5 secondes)
+- Attendre jusqu'à ce qu'il y ait plus de texte (du texte avec des parenthèses
+  (environ 20 secondes)
+- Vous pouvez touchez le capteur (vas y touche bb)
+
+Démarrage du filtre :
+- Ouvrir un terminal
+- Se déplacer jusqu'au dossier /home/clubelek/Togetic (cd
+  /home/clubelek/Togetic)
+- Lancer le filtre (./Filter.py --input /tmp/togetic-0 --output /tmp/togetic-1)
+
+Démarrage de blender :
+- Ouvrir un terminal
+- Se déplacer jusqu'au dossier /home/clubelek/Togetic (cd
+  /home/clubelek/Togetic)
+- Lancer blender (./Blender.py --input /tmp/togetic-1 --blender
+  /home/clubelek/togetic/blender/Togetic.blend)
+- Attendre environ 10sec pour que l'application démarre vraiment.

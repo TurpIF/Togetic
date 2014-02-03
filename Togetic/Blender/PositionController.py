@@ -8,6 +8,7 @@ class PositionController:
     def __init__(self, addr_input, owner):
         self._owner = owner
         self._initPosition = self._owner.worldPosition.copy()
+        self._initOrientation = self._owner.orientation.copy()
         self._shm = shm([0, 0, 0, 0, 0, 0])
         self._receiver = Receiver(addr_input, shm)
         self._receiver.start()
@@ -25,8 +26,9 @@ class PositionController:
             self._owner.worldPosition = self._initPosition \
                     + mathutils.Vector((x, y, z))
             ori = self._owner.orientation.to_euler()
-            ori.x = theta
-            ori.y = -phy
-            ori.z = psy
+            iOri = self._initOrientation.to_euler()
+            ori.x = iOri.x - theta
+            ori.y = iOri.y - phy
+            ori.z = iOri.z + psy
             self._owner.orientation = ori
             print(time.time() - t, t, x, y, z, ori.x, ori.y, ori.z)

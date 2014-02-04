@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <vector>
+#include "kinect.h"
 
 int socket_fd;
 std::vector<pid_t> children;
@@ -41,7 +42,19 @@ int connection_handler(int connection_fd) {
   return 0;
 }
 
-int main(void) {
+int main(int argc, char ** argv) {
+  Kinect k("Togetic");
+  openni::Status rc = openni::STATUS_OK;
+  rc = k.Init(argc, argv);
+  if (rc != openni::STATUS_OK)
+  {
+    return 1;
+  }
+  k.Run();
+  return 0;
+}
+
+int _main(void) {
   struct sockaddr_un address;
   int connection_fd;
   socklen_t address_length;

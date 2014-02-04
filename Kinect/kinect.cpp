@@ -1,3 +1,5 @@
+#include <iostream>
+
 #define __STDC_FORMAT_MACROS
 #include <inttypes.h>
 
@@ -62,6 +64,9 @@ openni::Status Kinect::Init(int argc, char **argv)
 openni::Status Kinect::Run()
 {
   std::cout << "running..." << std::endl;
+  while(true) {
+    Update();
+  }
   return openni::STATUS_OK;
 }
 

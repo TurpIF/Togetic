@@ -12,7 +12,7 @@ class Kinect {
 
     virtual openni::Status Init(int argc, char **argv);
     virtual openni::Status Run();
-    void Kinect::Update();
+    void Update();
 
   protected:
     void Finalize();
@@ -20,9 +20,6 @@ class Kinect {
   private:
     Kinect(const Kinect&);
     Kinect& operator=(Kinect&);
-
-    void UpdateXYZ(nite::UserTracker* pUserTracker,
-        const nite::UserData& userData);
 
     static Kinect* ms_self;
 

@@ -154,7 +154,7 @@ void Kinect::Update()
     if (user.isNew())
     {
       m_pUserTracker->startSkeletonTracking(user.getId());
-      m_pUserTracker->startPoseDetection(user.getId(), nite::POSE_CROSSED_HANDS);
+      // m_pUserTracker->startPoseDetection(user.getId(), nite::POSE_CROSSED_HANDS);
     }
     else if (!user.isLost())
     {

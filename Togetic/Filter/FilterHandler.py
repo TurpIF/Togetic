@@ -53,9 +53,10 @@ class Histo(object):
             self.hist = self.hist[1:]
 
 class FilterHandler(AbstractServer):
-    def __init__(self, input_shm, output_shm):
+    def __init__(self, shm_serial, shm_kinect, output_shm):
         AbstractServer.__init__(self)
-        self._in_shm = input_shm
+        self._serial_shm = shm_serial
+        self._kinect_shm = shm_kinect
         self._out_shm = output_shm
         self._time = None
 
@@ -68,18 +69,18 @@ class FilterHandler(AbstractServer):
     def _serve(self):
         alpha = 0.5
 
-        in_data = self._in_shm.data
-        self._in_shm.data = None
-        if in_data is not None and len(in_data) == 10:
+        serial_data = self._serial_shm.data
+        # self._serial_shm.data = None
+        if serial_data is not None and len(serial_data) == 10:
             # print(in_data)
             if self._time is None:
-                self._time = in_data[0]
+                self._time = serial_data[0]
                 return
-            t = in_data[0]
+            t = serial_data[0]
             dt = t - self._time
-            a = in_data[1:4]
-            g = in_data[4:7]
-            c = in_data[7:10]
+            a = serial_data[1:4]
+            g = serial_data[4:7]
+            c = serial_data[7:10]
 
             for h, v in zip(self.gyr, g):
                 h.add_value(v)
@@ -128,19 +129,30 @@ class FilterHandler(AbstractServer):
             #     h.add_value(val)
             ang = [h.value for h in self.ang]
             ang = [noise_f(3)(v, h) for v, h in zip(ang, self.ang)]
-            print('A', ang[0], ang[1], ang[2])
-            print('a', str(a[0])[:6], str(a[1])[:6], str(a[2])[:6])
+            # print('A', ang[0], ang[1], ang[2])
+            # print('a', str(a[0])[:6], str(a[1])[:6], str(a[2])[:6])
             # ang = [lowpass_f(0.5)(v, h) for v, h in zip(ang, self.ang)]
 
-            for h in self.pos:
-                h.add_value(0)
-            pos = [h.value for h in self.pos]
-            pos = [noise_f(3)(v, h) for v, h in zip(pos, self.pos)]
+# kinect
 
-            x, y, z = pos
+            x, y, z = self.pos[0].value, self.pos[1].value, self.pos[2].value
+            kinect_data = self._kinect_shm.data
+            print('K', kinect_data)
+            if kinect_data is not None and len(kinect_data) == 4:
+                kx = kinect_data[1] / 500.0
+                ky = kinect_data[2] / 500.0
+                kz = kinect_data[3] / 500.0
+                kz = 0
+                self.pos[0].add_value(kx)
+                self.pos[1].add_value(ky)
+                self.pos[2].add_value(kz)
+                pos = [h.value for h in self.pos]
+                pos = [noise_f(3)(v, h) for v, h in zip(pos, self.pos)]
+                x, y, z = pos
+
             u, v, w = ang
-            x, y, z = 0, 0, 0
             out_data = t, x, y, z, u, v, w
+            # print('O', out_data)
             self._out_shm.data = out_data
             self._time = t
         time.sleep(0.01)

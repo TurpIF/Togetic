@@ -43,3 +43,4 @@ nosetests.xml
 
 *.blend1
 *.blend2
+a.out

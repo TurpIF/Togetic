@@ -9,9 +9,13 @@
 #include <string.h>
 #include <vector>
 #include "kinect.h"
+#include <sstream>
 
 int socket_fd;
 std::vector<pid_t> children;
+float x = 0;
+float y = 0;
+float z = 0;
 
 static void interrupt_handler(int signo) {
   printf("arret du programme\n");
@@ -26,35 +30,21 @@ static void interrupt_handler(int signo) {
 }
 
 int connection_handler(int connection_fd) {
-  signed int x = 0;
-  signed int y = 0;
-  signed int z = 0;
+  printf("Nouvelle connexion\n");
+  fflush(stdout);
   size_t len = 0;
 
   while(1) {
-    char buffer[25] = {0};
-    len = sprintf(buffer, "T %d %d %d\n", x, y, z);
-    if(len > 0) {
-      write(connection_fd, buffer, len);
-    }
-    x = (x + 1) % 4096;
+    std::ostringstream oss;
+    oss << "T " << x << " " << y << " " << z << "\n";
+    write(connection_fd, oss.str().c_str(), oss.str().size());
   }
   return 0;
 }
 
-int main(int argc, char ** argv) {
-  Kinect k("Togetic");
-  openni::Status rc = openni::STATUS_OK;
-  rc = k.Init(argc, argv);
-  if (rc != openni::STATUS_OK)
-  {
-    return 1;
-  }
-  k.Run();
-  return 0;
-}
-
-int _main(void) {
+void server(void) {
+  printf("Demarrage du serveur\n");
+  fflush(stdout);
   struct sockaddr_un address;
   int connection_fd;
   socklen_t address_length;
@@ -62,13 +52,13 @@ int _main(void) {
 
   if(signal(SIGINT, interrupt_handler) == SIG_ERR) {
     printf("An error occurred while setting a signal handler.\n");
-    return 1;
+    return;
   }
 
   socket_fd = socket(PF_UNIX, SOCK_STREAM, 0);
   if(socket_fd < 0) {
     printf("socket() failed\n");
-    return 1;
+    return;
   }
 
   unlink("/tmp/togetic-k");
@@ -81,12 +71,12 @@ int _main(void) {
         (struct sockaddr *) &address,
         sizeof(struct sockaddr_un)) != 0) {
     printf("bind() failed\n");
-    return 1;
+    return;
   }
 
   if(listen(socket_fd, 5) != 0) {
     printf("listen() failed\n");
-    return 1;
+    return;
   }
 
   while((connection_fd = accept(socket_fd, 
@@ -94,13 +84,38 @@ int _main(void) {
           &address_length)) > -1) {
     child = fork();
     if(child == 0) {
-      return connection_handler(connection_fd);
+      printf("coucou tu veux voir ma ...\n");
+      fflush(stdout);
+      exit(connection_handler(connection_fd));
     }
     else {
       children.push_back(child);
       close(connection_fd);
     }
   }
+}
 
+int main(int argc, char ** argv) {
+  Kinect k("Togetic", &x, &y, &z);
+  openni::Status rc = openni::STATUS_OK;
+  rc = k.Init(argc, argv);
+  if (rc != openni::STATUS_OK)
+  {
+    return 1;
+  }
+
+  pid_t child;
+  child = fork();
+
+  if(child == 0) {
+    server();
+  }
+  else {
+    printf("Lancement de la kinect\n");
+    fflush(stdout);
+    k.Run();
+    // exit(0);
+  }
   return 0;
 }
+

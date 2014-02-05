@@ -139,10 +139,9 @@ class FilterHandler(AbstractServer):
             kinect_data = self._kinect_shm.data
             print('K', kinect_data)
             if kinect_data is not None and len(kinect_data) == 4:
-                kx = kinect_data[1] / 500.0
-                ky = kinect_data[2] / 500.0
-                kz = kinect_data[3] / 500.0
-                kz = 0
+                kx = -(kinect_data[1] + 140) / 20.0
+                ky = -(kinect_data[3] - 1000) / 20.0
+                kz = (kinect_data[2] - 0) / 20.0
                 self.pos[0].add_value(kx)
                 self.pos[1].add_value(ky)
                 self.pos[2].add_value(kz)
@@ -151,6 +150,7 @@ class FilterHandler(AbstractServer):
                 x, y, z = pos
 
             u, v, w = ang
+            u, v, w = 0, 0, 0
             out_data = t, x, y, z, u, v, w
             # print('O', out_data)
             self._out_shm.data = out_data

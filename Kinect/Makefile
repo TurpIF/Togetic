@@ -9,7 +9,7 @@ INC_DIRS = \
 	$(OPENNI2_INCLUDE) \
 	$(NITE2_INCLUDE)
 
-SRC_FILES = main.cpp kinect.cpp
+SRC_FILES = main2.cpp Viewer.cpp
 
 ifeq ("$(OSTYPE)","Darwin")
 	CFLAGS += -DMACOS
@@ -25,6 +25,6 @@ USED_LIBS += OpenNI2 NiTE2
 
 EXE_NAME = UserViewer
 
-CFLAGS += -Wall -I.
+CFLAGS += -Wall -I. -g
 
 include CommonCppMakefile

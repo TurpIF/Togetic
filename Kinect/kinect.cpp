@@ -12,11 +12,14 @@
 
 Kinect* Kinect::ms_self = NULL;
 
-Kinect::Kinect(const char* strSampleName) : m_poseUser(0)
+Kinect::Kinect(const char* strSampleName, float * x, float * y, float * z) : m_poseUser(0)
 {
   ms_self = this;
   strncpy(m_strSampleName, strSampleName, ONI_MAX_STR);
   m_pUserTracker = new nite::UserTracker;
+  m_x = x;
+  m_y = y;
+  m_z = z;
 }
 
 Kinect::~Kinect()
@@ -63,7 +66,7 @@ openni::Status Kinect::Init(int argc, char **argv)
 }
 openni::Status Kinect::Run()
 {
-  std::cout << "running..." << std::endl;
+  std::cout << "running..." << std::endl << std::flush;
   while(true) {
     Update();
   }
@@ -121,15 +124,18 @@ void updateUserState(const nite::UserData& user, uint64_t ts)
   }
 }
 
-void UpdateXYZ(nite::UserTracker* pUserTracker, const nite::UserData& userData)
+void Kinect::UpdateXYZ(nite::UserTracker* pUserTracker, const nite::UserData& userData)
 {
   nite::SkeletonJoint head = userData.getSkeleton().getJoint(nite::JOINT_HEAD);
   //std::cout << head.getPositionConfidence() << std::endl << std::flush;
   //if (head.getPositionConfidence() >= 0.5) {
-  float x = head.getPosition().x;
-  float y = head.getPosition().y;
-  float z = head.getPosition().z;
-  std::cout << "POS " << x << " " << y << " " << z << std::endl << std::flush;
+  // *m_x = head.getPosition().x;
+  // *m_y = head.getPosition().y;
+  // *m_z = head.getPosition().z;
+  std::cout << "POS " << head.getPosition().x
+    << " " << head.getPosition().y
+    << " " << head.getPosition().z
+    << std::endl << std::flush;
   //}
 }
 

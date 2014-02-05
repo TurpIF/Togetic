@@ -7,7 +7,7 @@
 
 class Kinect {
   public:
-    Kinect(const char* strSampleName);
+    Kinect(const char* strSampleName, float * x, float * y, float * z);
     virtual ~Kinect();
 
     virtual openni::Status Init(int argc, char **argv);
@@ -20,6 +20,8 @@ class Kinect {
   private:
     Kinect(const Kinect&);
     Kinect& operator=(Kinect&);
+    void UpdateXYZ(nite::UserTracker* pUserTracker, const
+        nite::UserData& userData);
 
     static Kinect* ms_self;
 
@@ -32,6 +34,9 @@ class Kinect {
     nite::UserTracker* m_pUserTracker;
     nite::UserId m_poseUser;
     uint64_t m_poseTime;
+    float * m_x;
+    float * m_y;
+    float * m_z;
 };
 
 #endif // TOGETIC_KINECT_H

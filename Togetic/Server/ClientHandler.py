@@ -2,6 +2,7 @@ import socket
 
 from Togetic.Server.Handler import Handler
 
+
 class ClientHandler(Handler):
     def __init__(self, addr, file=False):
         # Connect to the socket as a client
@@ -28,4 +29,3 @@ class ClientHandler(Handler):
         if self._socket is not None:
             self._socket.close()
         Handler.stop(self)
-

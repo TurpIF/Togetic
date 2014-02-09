@@ -1,6 +1,7 @@
 from queue import Empty
 from Togetic.Server import ClientHandler
 
+
 def Emitter(queue):
     class _Emitter(ClientHandler):
         def _msgToSend(self):

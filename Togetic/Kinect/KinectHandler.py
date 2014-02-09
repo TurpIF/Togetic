@@ -2,6 +2,7 @@ import time
 import sys
 from Togetic.Server.AbstractServer import AbstractServer
 
+
 class KinectHandler(AbstractServer):
     def __init__(self, shm):
         AbstractServer.__init__(self)

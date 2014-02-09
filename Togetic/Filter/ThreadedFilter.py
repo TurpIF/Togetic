@@ -9,6 +9,7 @@ from Togetic.Filter.Receiver import ReceiverKinect
 from Togetic.Filter.Emitter import Emitter
 from Togetic.Filter.FilterHandler import FilterHandler
 
+
 class ThreadedFilter(AbstractServer):
     def __init__(self, addr_input_serial, addr_input_kinect, addr_output):
         AbstractServer.__init__(self)
@@ -32,7 +33,8 @@ class ThreadedFilter(AbstractServer):
         time.sleep(0.5)
 
     def _free(self):
-        for s in [self._receiver_serial,
+        for s in [
+                self._receiver_serial,
                 self._receiver_kinect,
                 self._handler,
                 self._emitter]:

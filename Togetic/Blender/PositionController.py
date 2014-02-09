@@ -4,6 +4,7 @@ import time
 from Togetic.shm import shm
 from Togetic.Blender.Receiver import Receiver
 
+
 class PositionController:
     def __init__(self, addr_input, owner):
         self._owner = owner
@@ -23,8 +24,8 @@ class PositionController:
         data = self._shm.data
         if data is not None and len(data) == 7:
             t, x, y, z, theta, phy, psy = data
-            self._owner.worldPosition = self._initPosition \
-                    + mathutils.Vector((x, y, z))
+            self._owner.worldPosition = self._initPosition + \
+                    mathutils.Vector((x, y, z))
             ori = self._owner.orientation.to_euler()
             iOri = self._initOrientation.to_euler()
             ori.x = iOri.x - theta

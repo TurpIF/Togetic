@@ -1,7 +1,7 @@
-import time
 from Togetic.Server import Handler
 
-def Emitter(shm_data): #shm_accel, shm_gyro, shm_magnet):
+
+def Emitter(shm_data):
     class _Emitter(Handler):
         def _msgToSend(self):
             if shm_data.data is None:

@@ -1,6 +1,5 @@
 import time
-import math
-import serial
+import sys
 
 from Togetic.shm import shm
 
@@ -9,6 +8,7 @@ from Togetic.Server.Listener import Listener
 
 from Togetic.Kinect.Emitter import Emitter
 from Togetic.Kinect.KinectHandler import KinectHandler
+
 
 class ThreadedSensor(AbstractServer):
     def __init__(self, addr_output):
@@ -20,7 +20,7 @@ class ThreadedSensor(AbstractServer):
             Emitter(shm_data))
 
     def start(self):
-        time.sleep(5) # Wait for the serial to be ready
+        time.sleep(5)  # Wait for the serial to be ready
         for s in [
                 self._handler,
                 self._emitter]:

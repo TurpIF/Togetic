@@ -1,5 +1,5 @@
 from Togetic.Server import Handler
-import time
+
 
 def Emitter(shm):
     class _Emitter(Handler):

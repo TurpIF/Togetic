@@ -1,5 +1,6 @@
 from Togetic.Server import ClientHandler
 
+
 def Receiver(data_len):
     class _Receiver(ClientHandler):
         def __init__(self, addr, shm):
@@ -22,6 +23,7 @@ def Receiver(data_len):
                         return
                     else:
                         self._shm.data = info
+
         def _run(self):
             pass
     return _Receiver

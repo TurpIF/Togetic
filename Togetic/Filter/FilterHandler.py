@@ -2,6 +2,7 @@ import math
 import time
 from Togetic.Server.AbstractServer import AbstractServer
 
+
 def noise_f(distance):
     def _noise_f(value, histo):
         if (value - histo.avg) ** 2 > distance * histo.std:
@@ -9,12 +10,14 @@ def noise_f(distance):
         return value
     return _noise_f
 
+
 def lowpass_f(alpha):
     def _lowpass_f(value, histo):
         if len(histo.hist) >= 2:
             return histo.hist[-2] * alpha + value * (1.0 - alpha)
         return value
     return _lowpass_f
+
 
 class Histo(object):
     def __init__(self, size):
@@ -51,6 +54,7 @@ class Histo(object):
             self.sum -= self.hist[0]
             self.sq_sum -= self.hist[0] ** 2
             self.hist = self.hist[1:]
+
 
 class FilterHandler(AbstractServer):
     def __init__(self, shm_serial, shm_kinect, output_shm):
@@ -102,7 +106,8 @@ class FilterHandler(AbstractServer):
             vax = math.atan2(a[0], math.sqrt(a[1]**2 + a[2]**2))
             vay = math.atan2(a[1], math.sqrt(a[0]**2 + a[2]**2))
             if a[2] < 0:
-                vay = math.pi / 2.0 +  (math.pi / 2.0 - math.copysign(vay, a[1]))
+                vay = math.pi / 2.0 + (
+                        math.pi / 2.0 - math.copysign(vay, a[1]))
             # vay = math.atan2(-a[1], a[2])
             vgx = self.ang[0].value + dt * g[0]
             vgy = self.ang[1].value + dt * g[1]
@@ -110,7 +115,7 @@ class FilterHandler(AbstractServer):
             alpha = 0.1
             vx = vax * alpha + vgx * (1 - alpha)
             vy = vay * alpha + vgy * (1 - alpha)
-            vaz = 0
+            # vaz = 0
 # TODO gerer les divisions par zero
             # vaz = math.atan((c[0] * math.cos(vy) \
             #         + c[1] * math.sin(vx) * math.sin(vy) \
@@ -159,4 +164,3 @@ class FilterHandler(AbstractServer):
 
     def _free(self):
         pass
-

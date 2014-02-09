@@ -2,10 +2,10 @@ import time
 from queue import Queue
 
 from Togetic.Server.AbstractServer import AbstractServer
-from Togetic.Server.Listener import Listener
 
 from Togetic.Sock2File.Receiver import Receiver
 from Togetic.Sock2File.Emitter import Emitter
+
 
 class ThreadedSock2File(AbstractServer):
     def __init__(self, addr_input, addr_output):

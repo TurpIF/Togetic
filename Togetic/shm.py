@@ -2,6 +2,7 @@
 
 from threading import Lock
 
+
 class shm:
     def __init__(self, data=None):
         self._data = data

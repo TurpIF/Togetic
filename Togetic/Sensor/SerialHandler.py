@@ -1,6 +1,7 @@
 import time
 from Togetic.Server.AbstractServer import AbstractServer
 
+
 class SerialHandler(AbstractServer):
     def __init__(self, name, request, transformation, shm_serial, shm):
         AbstractServer.__init__(self)
@@ -28,8 +29,8 @@ class SerialHandler(AbstractServer):
         self._shm_serial.get(False).write(bytearray(self._request, 'ascii'))
         l = self._shm_serial.get(False).readline()
         self._shm_serial.release()
-        print ('T', time.time() - t)
-        print ('B', l)
+        print('T', time.time() - t)
+        print('B', l)
         try:
             mes = l.decode('ascii').split()
         except UnicodeDecodeError:
@@ -60,11 +61,12 @@ class SerialHandler(AbstractServer):
                     try:
                         ax, ay, az, gx, gy, gz, cx, cy, cz = \
                                 self._transformation(list(map(float, mes)),
-                                        self._acc_avg, self._gyr_avg)
-                        if abs(float(mes[3])) > 30000 \
-                                or abs(float(mes[4])) > 30000 \
-                                or abs(float(mes[5])) > 30000:
-                                print('D gogolito', mes)
+                                                     self._acc_avg,
+                                                     self._gyr_avg)
+                        if abs(float(mes[3])) > 30000 or \
+                                abs(float(mes[4])) > 30000 or \
+                                abs(float(mes[5])) > 30000:
+                            print('D gogolito', mes)
                     except ValueError:
                         print(mes, ' -> GTFO!!!')
                     else:
@@ -72,4 +74,7 @@ class SerialHandler(AbstractServer):
                         print('A', (ax, ay, az))
                         print('G', (gx, gy, gz))
                         print('C', (cx, cy, cz))
-                        self._shm.data = (t, ax, ay, az, gx, gy, gz, cx, cy, cz)
+                        self._shm.data = (t,
+                                ax, ay, az,
+                                gx, gy, gz,
+                                cx, cy, cz)

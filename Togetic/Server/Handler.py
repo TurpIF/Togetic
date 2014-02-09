@@ -2,6 +2,7 @@ from select import select
 
 from Togetic.Server.AbstractServer import AbstractServer
 
+
 class Handler(AbstractServer):
     def __init__(self, client):
         """

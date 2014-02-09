@@ -4,6 +4,7 @@ import select
 
 from Togetic.Server.AbstractServer import AbstractServer
 
+
 class Listener(AbstractServer):
     def __init__(self, addr, handler):
 # TODO let chose the protocol and the type of the socket to use
@@ -73,4 +74,3 @@ class Listener(AbstractServer):
             client.stop()
             client.join(2)
         self._socket.close()
-

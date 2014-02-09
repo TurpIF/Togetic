@@ -1,5 +1,6 @@
 from Togetic.Server import ClientHandler
 
+
 class Receiver(ClientHandler):
     def __init__(self, addr, queue):
         ClientHandler.__init__(self, addr)

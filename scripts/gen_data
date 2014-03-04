@@ -1,18 +1,38 @@
 #!/usr/bin/env sh
 
-echo "SWAG"
-python3 -u ./SerialSensor.py --input $1 --output /tmp/togetic-0 > ./donnees_capteur/valeur_brutes_sans_mouvement.dat &
+usage="Genere data
+
+Usage:
+  gen_data <serial-input> <dir-data>
+
+Run the ../SerialSensor script to acquire some data with <serial-input> as
+input source of serial. This one is generally /dev/ttyACM0 or /dev/ttyACMN
+where N is a number. The output socket of the ../SerialSensor script is
+/tmp/togetic-0.
+The output of the script is redirected into <dir-data>/brut.dat. After 60
+secondes of data acquisition, the ../SerialSensor script is killed and data are
+selected and save into PNG image files.
+
+This script is use to calibrate the sensors of the IMU. When the average (given
+by the script at execution) is near 0, the calibration is good. The images of
+plot give a idea of the read data (noise, offset, scale, ...).
+"
+
+[ "$#" -ne 2] && echo "$usage" && exit 1
+
+output=$2/brut.dat
+
+echo "Lancement de l'acquisition des données et écriture dans $output"
+python3 -u ../SerialSensor --input $1 --output /tmp/togetic-0 > $output &
 echo ${pidSensor}
 pidSensor=$!
 echo "Attente pendant 60 secondes"
 sleep 60
 echo "Assez attendu, on kill le $pidSensor"
+kill -15 $pidSensor
 kill -9 $pidSensor
-cd donnees_capteur/
-echo "data transformation"
-python2 ./data_transform.py valeur_brutes_sans_mouvement.dat
-echo "plot"
-python2 ./plot.py
-echo "FINI"
-# ./Filter.py --input /tmp/togetic-1 &
-# pidFilter=$!
+echo "Transformation des données"
+python2 ./data_select $output $2
+echo "Sauvegarde dans des images PNG"
+python2 ./data_to_png $2
+echo "Done"

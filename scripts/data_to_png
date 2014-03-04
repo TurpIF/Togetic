@@ -5,17 +5,20 @@ Plot to image
 
 Plot some data and save them into png image files.
 
-The data are taken from ./thread_A.dat, ./thread_G.dat and ./thread_C.dat and
-are saved into, respectively, ./thread_A.dat.x.png, ./thread_A.dat.y.png,
-./thread_A.dat.z.png and ./thread_G.dat.x.png, ./thread_G.dat.y.png,
-./thread_G.dat.z.png and ./thread_C.dat.x.png, ./thread_C.dat.y.png,
-./thread_C.dat.z.png.
+Usage:
+    data_to_png <dir-name>
+    data_to_png (-h | --help)
+
+The data are taken from <dir-name>/thread_A.dat,
+<dir-name>/thread_G.dat and <dir-name>/thread_C.dat and are saved
+into, respectively, <dir-name>/thread_A.dat.x.png,
+<dir-name>/thread_A.dat.y.png, <dir-name>/thread_A.dat.z.png and
+<dir-name>/thread_G.dat.x.png, <dir-name>/thread_G.dat.y.png,
+<dir-name>/thread_G.dat.z.png and <dir-name>/thread_C.dat.x.png,
+<dir-name>/thread_C.dat.y.png, <dir-name>/thread_C.dat.z.png.
+
 The format of the data contained in files have to be a triplet of float number
 splitted by space.
-
-Usage:
-    data_to_png
-    data_to_png (-h | --help)
 
 Options:
     -h, --help  Show this screen.
@@ -29,9 +32,9 @@ Output:
 from pylab import *
 import os.path
 
-l_name = ['./thread_A.dat',
-    './thread_G.dat',
-    './thread_C.dat']
+l_name = ['thread_A.dat',
+    'thread_G.dat',
+    'thread_C.dat']
 
 def _plot(f_name) :
     l_x = []
@@ -60,7 +63,8 @@ def _plot(f_name) :
 
 if __name__ == '__main__':
     from docopt import docopt
-    docopt(__doc__)
+    args = docopt(__doc__)
     for name in l_name:
+        name = os.path.join(args['<dir-name>'], name)
         print 'Use file: ', name
         _plot(name)

@@ -1,0 +1,15 @@
+#!/bin/sh
+usage="Delay
+
+Usage:
+  delay <data-file>
+
+Give the delay between the acquisition of the sensors' data and the show in
+Blender. The output's format is N D on each line where N is the number of the
+data line (beginning at 0) and D is the delay.
+The <data-file> argument represent a filename of a data file containing the
+output of the Togetic's Blender's executable.
+"
+
+[ "$#" -ne 1 ] && echo "$usage" && exit 1
+cat $1 | grep -v "[a-zA-Z]" | awk '{print NR" "$1}'

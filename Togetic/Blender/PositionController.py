@@ -1,5 +1,6 @@
 import mathutils
 import time
+import math
 
 from Togetic.shm import shm
 from Togetic.Blender.Receiver import Receiver
@@ -25,7 +26,7 @@ class PositionController:
             self._owner.worldPosition = self._initPosition \
                     + mathutils.Vector((x, y, z))
             ori = self._owner.orientation.to_euler()
-            ori.x = theta
+            ori.x = -theta + math.pi / 2
             ori.y = -phy
             ori.z = psy
             self._owner.orientation = ori

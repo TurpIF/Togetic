@@ -1,5 +1,6 @@
 import sys
 import threading
+import time
 
 class AbstractServer(threading.Thread):
     def __init__(self):
@@ -39,6 +40,7 @@ class AbstractServer(threading.Thread):
         while self._running:
             try:
                 self._serve()
+                time.sleep(0.005)
             except Exception as e:
                 # print('Server `', self, '` stopped by an exception :', e, file=sys.stderr)
                 self.stop()

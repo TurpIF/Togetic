@@ -1,0 +1,66 @@
+#!/usr/bin/env python2
+
+"""
+Plot to image
+
+Plot some data and save them into png image files.
+
+The data are taken from ./thread_A.dat, ./thread_G.dat and ./thread_C.dat and
+are saved into, respectively, ./thread_A.dat.x.png, ./thread_A.dat.y.png,
+./thread_A.dat.z.png and ./thread_G.dat.x.png, ./thread_G.dat.y.png,
+./thread_G.dat.z.png and ./thread_C.dat.x.png, ./thread_C.dat.y.png,
+./thread_C.dat.z.png.
+The format of the data contained in files have to be a triplet of float number
+splitted by space.
+
+Usage:
+    data_to_png
+    data_to_png (-h | --help)
+
+Options:
+    -h, --help  Show this screen.
+
+Output:
+    For the 3 data files, the average on X, Y and Z are printed
+    on the standard ouput. When trying to calibrate the 0 on each
+    axes of sensor, more the average is near of 0 better it is.
+"""
+
+from pylab import *
+import os.path
+
+l_name = ['./thread_A.dat',
+    './thread_G.dat',
+    './thread_C.dat']
+
+def _plot(f_name) :
+    l_x = []
+    l_y = []
+    l_z = []
+    with open(f_name, "r") as f:
+        for i in f:
+            x, y, z = 0, 0, 0
+            try:
+                x, y, z = map(float, data.split())
+            except ValueError:
+                print 'Value error in data :', data
+                continue
+            l_x.append(x)
+            l_y.append(y)
+            l_z.append(z)
+    print 'X Average: ', sum(l_x) * 1.0 / len(l_x)
+    print 'Y Average: ', sum(l_y) * 1.0 / len(l_y)
+    print 'Z Average: ', sum(l_z) * 1.0 / len(l_z)
+    for l, d in zip([l_x, l_y, l_z], ["x", "y", "z"]) :
+        plot(l)
+        name = "%s.%s.png" % (f_name, d)
+        print("Save: {}".format(name))
+        savefig(name)
+        clf()
+
+if __name__ == '__main__':
+    from docopt import docopt
+    docopt(__doc__)
+    for name in l_name:
+        print 'Use file: ', name
+        _plot(name)

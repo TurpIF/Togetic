@@ -1,9 +1,13 @@
-import threading
-import mathutils
-import socket
-import os
-import select
+"""
+Create a new blender object inside your scene. Then add a new module Python
+controller BlenderController.main and connect it with a new always sensor.
+"""
+
 import bpy
+import sys
+
+# Put the path of Togetic library inside the syspath
+sys.path.append("../")
 
 from Togetic.Blender import PositionController
 

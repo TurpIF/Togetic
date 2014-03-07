@@ -21,12 +21,14 @@ L'architecture globale est la suivante :
 Voici un schéma de l'architecture globale de l'application :
 ![Architecture][]
 
-## Diffusion des messages I2C
+## Initialisation et lecture des capteurs
+
+## Diffusion des données bruts
 
 ## Filtrage des données et calcul de la position
 ![Filtre][]
 
-## Affichage sur une courbe des données
+## Calibration des capteurs
 
 ## Blender
 Cette partie écoute continuellement sur un socket dont l'adresse est passée en
@@ -47,33 +49,30 @@ fréquence prédéfinie. Lorsque cette fonction est appelé pour la première fo
 elle crée le fil d'exécution d'écoute sur le socket. Ce dernier doit alors
 s'arreter lorsque le controller l'est.
 
-Pour lancer cette partie, il faut d'abord lancer blender. Un script de
-lancement est présent et permet également de controller l'adresse par paramètre
-l'adresse du socket de communication. Ce script ouvrira la scène blender,
-ajoutera un sensor always associé à un controlleur python exécutant la fonction
-définie ci-dessus. Ensuite, il placera la fenetre en plein écran avec une vue
-caméra sur la scène et lancera le moteur de jeu de blender.
+Pour exécuter Blender avec l'écoute du socket :
 
-Son utilisation est :
+```sh
+# Attention à ne pas oublier le ./ devant Blender
+./Blender --input=<socket_filename> --blender=<blender_filename>
+```
 
-    ./runBlender.py --input=<socket_filename> --blender=<blender_filename>
-
-Pour le moment, le lancement de blender n'est pas totalement géré. Il faut donc
-exécuter manuellement le game engine de blender et préconfigurer la scène en
-ajoutant le sensor associé au controlleur.
-
-Il existe également un fichier contenant un serveur de test envoyant une
-position suivant une trajectoire de cercle pour tester cette partie de
-l'application. Il faut d'abord lancer le serveur puis blender :
-
-    ./TestServer.py --output=<path_to_socket> &
-    ./runBlender.py --input=<socket_filename> --blender=<blender_filename>
+La scène blender doit être au préalable configurée afin que l'application
+fonctionne. L'objet devant suivre les mouvements du capteur doit être muni d'un
+sensor Always relié à un controller de module Python *BlenderController.main*.
+Ce contrôleur se trouve dans le fichier
+*[./assets/BlenderController.py][ControleurBlender]* à inclure dans l'éditeur
+interne de la scène Blender. Veuillez vous assurez que le dossier contenant la
+library Python Togetic soit contenu dans le path de Python. Sur certaines
+versions de Blender, le lancement automatique du BlenderGame Engine est
+désactivé. Il faut donc le faire manuellement en appuyant sur la touche P.
 
 ## Pourquoi Togetic ?
 Le nom du projet est vraiment simple à retrouver et il suffit d'appliquer une
 toute petite formule vraiment banale (en python) :
 
-    N = sum(set(map(lambda x: ord(x.upper()) - ord('A') + 1, reduce(operator.add, L))))
+```python
+N = sum(set(map(lambda x: ord(x.upper()) - ord('A') + 1, reduce(operator.add, L))))
+```
 
 - On considère une liste de mot L.
 - On réduit cette liste à une chaîne de caractères contenant tous les mots.
@@ -104,6 +103,7 @@ Bibliothèques Arduino :
 
 [Architecture]: ../../blob/master/docs/Architecture.png?raw=true
 [Filtre]: ../../blob/master/docs/Filter.png?raw=true
+[ControleurBlender]: ../../blob/master/assets/BlenderController.py
 [Togetic]: ../../blob/master/assets/togetic.png?raw=true
 [Python 3.3]: http://www.python.org/download/releases/3.3
 [Matplotlib]: http://matplotlib.org

@@ -98,7 +98,7 @@ Bibliothèques Arduino :
 - [Stéphane Baudrand][]
 - [Franz Laugt][]
 
-[Togetic]: ../../blob/master/assets/togetic.png
+[Togetic]: ../../blob/master/assets/togetic.png?raw=true
 [Python 3.3]: http://www.python.org/download/releases/3.3
 [Matplotlib]: http://matplotlib.org
 [Blender]: http://www.blender.org

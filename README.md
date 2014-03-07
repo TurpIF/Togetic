@@ -1,6 +1,8 @@
 Togetic
 =======
 
+![Togetic][]
+
 Application utilisant une centrale inertiel pour récupérer la position d'un
 objet et contrôler une caméra dans blender.  L'application est découpée en
 différentes tâches permettant d'avoir des éléments dédiés communiquants par
@@ -96,6 +98,7 @@ Bibliothèques Arduino :
 - [Stéphane Baudrand][]
 - [Franz Laugt][]
 
+[Togetic]: ../../blob/master/assets/togetic.png
 [Python 3.3]: http://www.python.org/download/releases/3.3
 [Matplotlib]: http://matplotlib.org
 [Blender]: http://www.blender.org

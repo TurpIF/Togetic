@@ -10,16 +10,21 @@ IPC.  Les IPC utilisés sont des sockets sur le domaine UNIX.
 
 L'architecture globale est la suivante :
 - Demande et écoute des message I2C provenant des différents capteurs puis
-  retransmission directe (sans modification des données récupérées) avec un
-  socket.
-- Ecoute des données sur le socket précédemment fait puis filtrage puis calcul
-  de la position relative puis renvoie sur un socket.
+  retransmission directe (sans modification des données récupérées) au PC via
+  communication Serial (UBS).
+- Ecoute des informations bruts sur le sérial et renvoie sur un socket.
+- Ecoute des données sur le socket précédemment fait puis filtrage et calcul de
+  la position relative puis renvoie sur un socket.
 - Obtention de la position puis modification de la caméra principale d'une
   scène [Blender][] en utilisant le BGE.
+
+Voici un schéma de l'architecture globale de l'application :
+![Architecture][]
 
 ## Diffusion des messages I2C
 
 ## Filtrage des données et calcul de la position
+![Filtre][]
 
 ## Affichage sur une courbe des données
 
@@ -84,7 +89,6 @@ Ce nombre correspond au numéro du pokémon Togetic.
 - [Python 3.3][]
 - [Matplotlib][]
 - [Blender][] (utilisé avec la 2.69)
-- [Quick2wire][]
 
 Bibliothèques Arduino :
 - [ADXL345][]
@@ -92,12 +96,14 @@ Bibliothèques Arduino :
 - [L3G4200D][]
 
 ## Auteurs
-- [Pierre Turpin][]
+- [Franz Laugt][]
 - [Matthieu Falce][]
+- [Pierre Turpin][]
 - [Sarah Leclerc][]
 - [Stéphane Baudrand][]
-- [Franz Laugt][]
 
+[Architecture]: ../../blob/master/docs/Architecture.png?raw=true
+[Filtre]: ../../blob/master/docs/Filter.png?raw=true
 [Togetic]: ../../blob/master/assets/togetic.png?raw=true
 [Python 3.3]: http://www.python.org/download/releases/3.3
 [Matplotlib]: http://matplotlib.org
